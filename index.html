@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmic Interactive Portfolio</title>
+    
+    <link rel="stylesheet" href="style.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap" rel="stylesheet">
+</head>
+<body class="loading">
+
+    <div id="custom-scrollbar">
+        <div id="scrollbar-thumb"></div>
+    </div>
+
+    <div id="loader" class="visible">
+        <canvas id="loader-canvas"></canvas>
+        
+        <div id="start-engine-ui">
+            <h1 class="engine-title">START ENGINE</h1>
+            <button id="start-engine-btn">
+                <i class="fas fa-power-off"></i>
+            </button>
+        </div>
+        
+        <div id="loader-content">
+            <h1 class="loader-title">EZKEN</h1>
+        </div>
+    </div>
+    
+    <div class="cursor"></div>
+    <div class="cursor-follower"></div>
+
+    <canvas id="background-canvas"></canvas>
+    <div class="particle-trail" id="particleTrail"></div>
+
+    <div id="main-content-wrapper">
+        <div class="container">
+            <header>
+                <nav>
+                    <div class="logo">Rifat's Portfolio</div>
+                    <div class="nav-links">
+                        <a href="#projects">Projects</a>
+                        <a href="#skills">Skills</a>
+                        <a href="#about">About</a>
+                        <a href="#">Contact</a>
+                    </div>
+                </nav>
+            </header>
+
+            <section class="hero">
+                <div class="hero-content">
+                    <h1>A star in the Making</h1>
+                    <p>Hello, I'm Rifat. Welcome to my universe of design and development, where creative ideas become stellar realities. Explore My World</p>
+                    <a href="#projects" class="btn">Explore My World</a>
+                </div>
+                <canvas id="sphereCanvas"></canvas>
+            </section>
+
+            <section id="projects" class="projects">
+                <h2 class="section-title">Live Projects</h2>
+                <div class="project-grid">
+                    
+                    <a href="https://ezken-dev.github.io" target="_blank" rel="noopener noreferrer" class="project-link">
+                        <div class="project-card">
+                            <div class="project-img">
+                                <img src="https://raw.githubusercontent.com/ezken-dev/ez-musics/main/Ezken%20OS%20big.png" alt="EZKEN OS Preview">
+                            </div>
+                            <div class="project-content">
+                                <h3 class="project-title">EzKen OS - Apex Edition</h3>
+                                <p class="project-desc">A productive web OS with a Focus Pet that grows as you complete tasks. Features a responsive UI and is built with zero frameworks.</p>
+                                <div class="project-tags">
+                                    <span class="tag">HTML5</span>
+                                    <span class="tag">CSS3</span>
+                                    <span class="tag">Vanilla JS</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+
+                    <a href="https://www.roblox.com/games/127072693793890/The-Hearth-Highly-Rated" target="_blank" rel="noopener noreferrer" class="project-link">
+                        <div class="project-card">
+                            <div class="project-img">
+                                <img src="https://raw.githubusercontent.com/ezken-dev/ez-musics/main/The%20hearth.png" alt="The Hearth Game Preview">
+                            </div>
+                            <div class="project-content">
+                                <h3 class="project-title">The Hearth</h3>
+                                <p class="project-desc">Step into The Hearth, a social hangout where cozy vibes meet deep mystery. Uncover hidden stories and lose yourself in a world crafted by Fonity Studio.</p>
+                                <div class="project-tags">
+                                    <span class="tag">Roblox</span>
+                                    <span class="tag">LUA</span>
+                                    <span class="tag">Game Design</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="https://nltemp.netlify.app" target="_blank" rel="noopener noreferrer" class="project-link">
+                        <div class="project-card">
+                            <div class="project-img">
+                                <img src="https://raw.githubusercontent.com/ezken-dev/ez-musics/main/ni%20portfolio%20original.png" alt="N&I Group Website Preview">
+                            </div>
+                            <div class="project-content">
+                                <h3 class="project-title">N&I Group Website Revamp</h3>
+                                <p class="project-desc">Led the full-stack revamp for a major woven factory and trading corp. Delivered a modern, scalable website with our team at Fonity.</p>
+                                <div class="project-tags">
+                                    <span class="tag">Node.js</span>
+                                    <span class="tag">AWS</span>
+                                    <span class="tag">Full-Stack Dev</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+
+                </div>
+            </section>
+
+            <section id="skills" class="skills">
+                <h2 class="section-title">My Skills</h2>
+                <div class="skills-grid">
+                    <div class="skill-item" data-title="3D Development" data-description="From architectural marvels to reality-defying game assets, I build and breathe life into three-dimensional worlds. It's not just about creating models; it's about crafting tangible digital experiences.">
+                        <div class="skill-icon"><i class="fas fa-cube"></i></div>
+                        <h3 class="skill-name">3D Development</h3>
+                    </div>
+                    <div class="skill-item" data-title="Web Development" data-description="I architect the digital spaces where ideas thrive. By weaving intricate logic with pixel-perfect design, I build fast, intuitive, and unforgettable web experiences that work flawlessly on any device.">
+                        <div class="skill-icon"><i class="fas fa-code"></i></div>
+                        <h3 class="skill-name">Web Development</h3>
+                    </div>
+                    <div class="skill-item" data-title="Game Development" data-description="I engineer fun. By combining storytelling, art, and complex mechanics, I build interactive worlds that challenge players, spark imagination, and create lasting memories, one level at a time.">
+                        <div class="skill-icon"><i class="fas fa-gamepad"></i></div>
+                        <h3 class="skill-name">Game Development</h3>
+                    </div>
+                    <div class="skill-item" data-title="Graphics Designing" data-description="Every brand has a story, and I tell it visually. I design stunning logos, impactful branding, and clean user interfaces that capture attention and communicate with clarity and purpose.">
+                        <div class="skill-icon"><i class="fas fa-pen-nib"></i></div>
+                        <h3 class="skill-name">Graphics Designing</h3>
+                    </div>
+                    <div class="skill-item" data-title="Video Editing" data-description="I am a digital storyteller, sculpting narratives from raw footage. Through precise cuts, dynamic pacing, and seamless effects, I shape emotion and deliver a message that resonates long after the screen goes dark.">
+                        <div class="skill-icon"><i class="fas fa-video"></i></div>
+                        <h3 class="skill-name">Video Editing</h3>
+                    </div>
+                    <div class="skill-item" data-title="Motion Designing" data-description="I make static visuals dance. By animating graphics, text, and logos, I create fluid, eye-catching motion pieces that elevate brands, explain complex ideas, and make digital content impossible to ignore.">
+                        <div class="skill-icon"><i class="fas fa-film"></i></div>
+                        <h3 class="skill-name">Motion Designing</h3>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="about" class="about-me">
+                <div class="floating-shape shape-1"><div class="shape-visual"></div></div>
+                <div class="floating-shape shape-2"><div class="shape-visual"></div></div>
+                <div class="floating-shape shape-3"><div class="shape-visual"></div></div>
+                <h2 class="section-title">About Me</h2>
+                <div class="about-me-grid">
+                    <div class="about-me-text">
+                        <p>Hey, I’m Rifat. I create things that feel like they were meant to exist, even before they made sense.</p>
+                        <p>I don’t follow formulas. I <span class="highlight-text">chase sparks</span>—the kind of ideas that haunt you until you bring them to life. My world runs on curiosity, late nights, wild sketches, broken code, beautiful mistakes, and breakthroughs that strike <span class="highlight-text">like lightning.</span></p>
+                        <p>I’m not here to impress. I’m here to connect, build, and leave something behind that actually means something.</p>
+                        <p>If you’re someone who feels too much, dreams too loud, or <span class="highlight-text">refuses to settle,</span> we’ll get along just fine.</p>
+                        <a href="cv.html" class="btn page-transition-btn" data-sound="ui-open-sound" style="margin-top: 1.5rem;">View My CV</a>
+                    </div>
+                    <div class="about-me-interactive">
+                        <div class="glitch-wrapper">
+                            <div class="glitch" data-text="KEN">KEN</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="finished-projects" class="projects">
+                <h2 class="section-title">Finished Projects</h2>
+
+                <div class="categories-wrapper">
+                    <div class="project-category">
+                        <h3 class="category-title">Video Projects</h3>
+                        <div class="project-grid">
+                            <div class="project-link video-project-card" data-video-id="9IsS11yXCcY">
+                                <div class="project-card">
+                                    <div class="project-img">
+                                        <img src="https://i.ytimg.com/vi/9IsS11yXCcY/hqdefault.jpg" alt="N&I Group Introduction Thumbnail">
+                                        <div class="play-icon-overlay"><i class="fas fa-play"></i></div>
+                                    </div>
+                                    <div class="project-content">
+                                        <h3 class="project-title">N&I Group Introduction</h3>
+                                        <div class="project-rating">
+                                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                        </div>
+                                        <p class="project-desc">An introduction video for the N&I Group, featuring dynamic motion graphics to showcase the company's profile.</p>
+                                        <div class="project-tags">
+                                            <span class="tag">Motion Graphics</span><span class="tag">Intro</span><span class="tag">Client Work</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="project-link video-project-card" data-video-id="s7vxPkj3UVc">
+                                <div class="project-card">
+                                    <div class="project-img">
+                                        <img src="https://i.ytimg.com/vi/s7vxPkj3UVc/hqdefault.jpg" alt="Valorant Intro Thumbnail">
+                                        <div class="play-icon-overlay"><i class="fas fa-play"></i></div>
+                                    </div>
+                                    <div class="project-content">
+                                        <h3 class="project-title">Valorant Tournament Intro</h3>
+                                        <div class="project-rating">
+                                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                                        </div>
+                                        <p class="project-desc">Intro for an online Valorant tournament, edited with dynamic effects to match the game's intensity.</p>
+                                        <div class="project-tags">
+                                            <span class="tag">Gaming</span><span class="tag">VFX</span><span class="tag">Intro</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="project-link video-project-card" data-video-id="fG8F9wGvBZk">
+                                <div class="project-card">
+                                    <div class="project-img">
+                                        <img src="https://i.ytimg.com/vi/fG8F9wGvBZk/hqdefault.jpg" alt="Music Digital Video Thumbnail">
+                                        <div class="play-icon-overlay"><i class="fas fa-play"></i></div>
+                                    </div>
+                                    <div class="project-content">
+                                        <h3 class="project-title">Client Music Video</h3>
+                                         <div class="project-rating">
+                                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                        </div>
+                                        <p class="project-desc">A music digital video for a client's project, involving concept development and post-production.</p>
+                                        <div class="project-tags">
+                                            <span class="tag">Music Video</span><span class="tag">Client Work</span><span class="tag">Production</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="project-link video-project-card" data-video-id="0tDPD6n9iyk">
+                                <div class="project-card">
+                                    <div class="project-img">
+                                        <img src="https://i.ytimg.com/vi/0tDPD6n9iyk/hqdefault.jpg" alt="Music Video Teaser Thumbnail">
+                                        <div class="play-icon-overlay"><i class="fas fa-play"></i></div>
+                                    </div>
+                                    <div class="project-content">
+                                        <h3 class="project-title">Animated Music Teaser</h3>
+                                        <div class="project-rating">
+                                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
+                                        </div>
+                                        <p class="project-desc">A short, captivating teaser for an animated music video, building anticipation with visual storytelling.</p>
+                                        <div class="project-tags">
+                                            <span class="tag">Animation</span><span class="tag">Teaser</span><span class="tag">Motion Graphics</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="project-category">
+                        <h3 class="category-title">Blender Projects</h3>
+                        <p class="placeholder-text">New Blender projects are being rendered in the cosmos... Stay tuned!</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <footer>
+            <div class="container">
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-github"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-dribbble"></i></a>
+                </div>
+                <p class="copyright">© 2025 Space-Themed Portfolio. Journey through the digital cosmos.</p>
+            </div>
+        </footer>
+    </div>
+        
+    <div id="transition-container"><canvas id="transition-canvas"></canvas></div>
+
+    <div id="skill-modal" class="skill-modal">
+        <div class="modal-content">
+            <span class="modal-close-btn">×</span>
+            <h2 id="modal-title">Skill Title</h2>
+            <canvas id="modal-3d-canvas"></canvas>
+            <div id="code-editor-container">
+                <div class="editor-header">
+                    <div class="editor-dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+                    <div class="editor-title">index.html</div>
+                </div>
+                <pre><code id="code-output"></code></pre>
+            </div>
+            <canvas id="game-dev-canvas"></canvas>
+            <div id="graphics-design-interactive">
+                <canvas id="kaleidoscope-canvas"></canvas>
+                <div id="kaleidoscope-controls">
+                    <div class="control-group">
+                        <label for="symmetry-slider">Symmetry</label>
+                        <input type="range" id="symmetry-slider" min="2" max="20" value="6">
+                        <span id="symmetry-value">6</span>
+                    </div>
+                    <button id="clear-kaleidoscope-btn" class="btn">Clear</button>
+                </div>
+            </div>
+            <div id="video-editing-interactive">
+                <canvas id="video-effect-canvas"></canvas>
+                <div class="timeline-container">
+                    <div class="timeline-track"></div>
+                    <div class="timeline-playhead"></div>
+                </div>
+                <div class="track-controls">
+                    <button class="track-toggle active" data-track="base"><i class="fas fa-layer-group"></i> Base</button>
+                    <button class="track-toggle active" data-track="vfx"><i class="fas fa-magic"></i> VFX</button>
+                    <button class="track-toggle active" data-track="text"><i class="fas fa-font"></i> Text</button>
+                </div>
+            </div>
+            <div id="motion-design-interactive">
+                <div class="motion-text-stage"></div>
+                <div class="motion-controls">
+                    <input type="text" id="motion-text-input" value="MOTION" maxlength="8" placeholder="Type a word...">
+                    <div class="motion-presets">
+                        <button class="preset-btn active" data-preset="cascade">Cascade</button>
+                        <button class="preset-btn" data-preset="bounce">Bounce</button>
+                        <button class="preset-btn" data-preset="typewriter">Reveal</button>
+                    </div>
+                </div>
+            </div>
+            <p id="modal-description">Skill description goes here.</p>
+        </div>
+    </div>
+
+    <div id="video-modal" class="skill-modal">
+        <div class="modal-content video-modal-content">
+            <span class="modal-close-btn video-modal-close">×</span>
+            <div class="video-container">
+                </div>
+        </div>
+    </div>
+
+    <audio id="intro-sound" src="https://github.com/ezken-dev/ez-musics/raw/refs/heads/main/intro-sound.mp3" preload="auto" loop></audio>
+    <audio id="ui-open-sound" src="https://github.com/ezken-dev/ez-musics/raw/refs/heads/main/ui-open.mp3" preload="auto"></audio>
+    <audio id="ui-close-sound" src="https://github.com/ezken-dev/ez-musics/raw/refs/heads/main/ui-close.mp3" preload="auto"></audio>
+    
+    <script src="script.js"></script>
+
+    <!-- Add this before the closing </body> tag -->
+    <div class="mobile-nav-toggle" id="mobileNavToggle">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    <nav class="mobile-nav" id="mobileNav">
+        <div class="mobile-nav-links">
+            <a href="#projects">Projects</a>
+            <a href="#skills">Skills</a>
+            <a href="#about">About</a>
+            <a href="#">Contact</a>
+        </div>
+    </nav>
+    <div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
+
+    <!-- Scroll to Top Button -->
+    <div id="scrollToTopBtn" class="scroll-to-top">
+        <svg class="progress-ring" width="60" height="60">
+            <circle class="progress-ring__circle-bg" stroke-width="4" fill="transparent" r="26" cx="30" cy="30"/>
+            <circle class="progress-ring__circle" stroke-width="4" fill="transparent" r="26" cx="30" cy="30"/>
+        </svg>
+        <i class="fas fa-arrow-up"></i>
+    </div>
+</body>
+</html>
