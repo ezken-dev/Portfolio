@@ -164,7 +164,7 @@ body.loading #main-content-wrapper {
     opacity: 0;
 }
 
-a, button, .skill-item, #sphereCanvas, .modal-close-btn, #game-dev-canvas, .color-box, .track-toggle, .preset-btn, .glitch-wrapper, .video-project-card {
+a, button, .skill-item, #sphereCanvas, .modal-close-btn, #game-dev-canvas, .color-box, .track-toggle, .preset-btn, .glitch-wrapper, .video-project-card, .image-project-card {
     cursor: none;
 }
 
@@ -1972,5 +1972,216 @@ body:not(.loading):not(.modal-open) #custom-scrollbar {
 
     .loader-title {
         font-size: 4rem;
+    }
+}
+
+/* === IMAGE MODAL STYLES === */
+.image-modal-content {
+    background: transparent;
+    border: none;
+    width: auto;
+    max-width: 90vw;
+    padding: 0;
+}
+
+.image-modal-content .image-modal-close {
+    /* Position close button relative to the viewport for better placement */
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    font-size: 2.5rem;
+    text-shadow: 0 0 10px rgba(0,0,0,0.7);
+}
+
+.image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.image-container img {
+    max-width: 100%;
+    max-height: 90vh; /* Limit height to 90% of the viewport height */
+    display: block;
+    border-radius: 10px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+/* === NEW & IMPROVED CONTACT FORM STYLES === */
+.contact-section {
+    padding: 6rem 0;
+    background: linear-gradient(180deg, rgba(13, 27, 42, 0) 0%, rgba(13, 27, 42, 0.5) 50%, rgba(13, 27, 42, 0) 100%);
+}
+
+.contact-container {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 4rem;
+    align-items: center;
+    background: rgba(13, 27, 42, 0.7);
+    padding: 3rem;
+    border-radius: 25px;
+    border: 1px solid rgba(76, 201, 240, 0.2);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+}
+
+.contact-info {
+    color: #caf0f8;
+}
+
+.contact-info h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 1rem;
+    background: linear-gradient(90deg, #4cc9f0, #ffffff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.contact-info p {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin-bottom: 2rem;
+}
+
+.social-links-contact {
+    display: flex;
+    gap: 1rem;
+}
+
+.social-links-contact a {
+    width: 45px;
+    height: 45px;
+    background: rgba(2, 2, 24, 0.5);
+    border: 1px solid rgba(76, 201, 240, 0.2);
+    color: #90e0ef;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+}
+
+.social-links-contact a:hover {
+    background: #4cc9f0;
+    color: #020218;
+    transform: translateY(-5px);
+    box-shadow: 0 0 15px #4cc9f0;
+}
+
+.contact-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.form-field {
+    position: relative;
+}
+
+.form-input {
+    width: 100%;
+    padding: 1rem;
+    background: rgba(2, 2, 24, 0.5);
+    border: 1px solid rgba(76, 201, 240, 0.2);
+    border-radius: 10px;
+    color: #e0f7fa;
+    font-size: 1rem;
+    font-family: 'Orbitron', sans-serif;
+    transition: all 0.3s ease;
+}
+
+.form-label {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    color: rgba(144, 224, 239, 0.5);
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.form-input:focus,
+.form-input:not(:placeholder-shown) {
+    outline: none;
+    border-color: #4cc9f0;
+    box-shadow: 0 0 15px rgba(76, 201, 240, 0.5);
+}
+
+.form-input:focus + .form-label,
+.form-input:not(:placeholder-shown) + .form-label {
+    top: -0.75rem;
+    left: 0.75rem;
+    font-size: 0.85rem;
+    color: #4cc9f0;
+    background: #0d1b2a; /* Match the form background */
+    padding: 0 0.25rem;
+}
+
+.form-field.full-width {
+    grid-column: 1 / -1;
+}
+
+.contact-form textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.contact-form .btn.full-width {
+    grid-column: 1 / -1;
+    padding: 1rem;
+    font-size: 1.1rem;
+}
+
+.contact-form .btn i {
+    margin-left: 0.5rem;
+    transition: transform 0.3s ease;
+}
+
+.contact-form .btn:hover i {
+    transform: translateX(5px) rotate(-15deg);
+}
+
+#form-status {
+    text-align: center;
+    margin-top: 1.5rem;
+    height: 20px;
+    color: #4cc9f0;
+    transition: opacity 0.3s ease;
+    grid-column: 1 / -1;
+}
+
+@media (max-width: 900px) {
+    .contact-container {
+        grid-template-columns: 1fr;
+        padding: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .contact-form {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* --- Starmap Navigation Styles --- */
+#starmap-canvas {
+    width: 400px;
+    height: 60px;
+    transition: all 0.3s ease;
+}
+
+#starmap-canvas:hover {
+    cursor: none; /* We will handle the cursor style in JS */
+}
+
+/* Hide the starmap on mobile and show the hamburger menu */
+@media (max-width: 900px) {
+    #starmap-canvas {
+        display: none;
     }
 }

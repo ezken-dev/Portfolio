@@ -17,7 +17,6 @@ let lastTouchY = 0;
 
 // --- INTERACTIVE & ANIMATED ELEMENTS STATE ---
 let interactiveElements = [];
-// Reverted: Removed scrollAnimatedElements array
 
 // --- SCROLL TO TOP BUTTON VARIABLES ---
 let scrollToTopBtn = null;
@@ -54,7 +53,6 @@ function initAndAnimateLoader() {
     animateLoader();
 }
 
-// This function now draws the same dynamic background as the main site
 function animateLoader() {
     if (!loaderCtx) return;
 
@@ -136,7 +134,7 @@ function initTransitionCanvas() {
 }
 
 function animateTransition(phase, onComplete, direction = 'forward') {
-    if (!transitionCtx) return;
+    if (!transitionCtx || !transitionCanvas) return;
 
     if (phase === 'in') {
         transitionSpeed += 0.25; 
@@ -187,8 +185,8 @@ function animateTransition(phase, onComplete, direction = 'forward') {
 
         const sx = (star.x / star.z) * transitionCanvas.width;
         const sy = (star.y / star.z) * transitionCanvas.height;
-        const r = Math.max(0.1, (1 - star.z / loaderWidth) * 3);
-        const opacity = Math.min(1, 1.5 - (star.z / loaderWidth));
+        const r = Math.max(0.1, (1 - star.z / transitionCanvas.width) * 3);
+        const opacity = Math.min(1, 1.5 - (star.z / transitionCanvas.width));
         
         transitionCtx.beginPath();
         transitionCtx.arc(sx, sy, r, 0, Math.PI * 2);
@@ -441,6 +439,119 @@ function setupMainScene() {
     mainSceneElements = { sphere, atmosphere, starRings, innerParticlesMesh };
 }
 
+// --- STARMAP NAVIGATION ---
+let starmapCanvas, starmapCtx, starmapStars = [], starmapMouse = { x: 0, y: 0 }, hoveredStar = null;
+
+function setupStarmap() {
+    starmapCanvas = document.getElementById('starmap-canvas');
+    if (!starmapCanvas) return;
+
+    starmapCtx = starmapCanvas.getContext('2d');
+    starmapCanvas.width = 400;
+    starmapCanvas.height = 60;
+
+    // Define our navigation "stars"
+    // Types: 'anchor' for smooth scrolling, 'page' for page transitions
+    starmapStars = [
+        { name: 'Projects', x: 50,  y: 30, radius: 5, target: '#projects', type: 'anchor' },
+        { name: 'Skills',   x: 130, y: 30, radius: 5, target: '#skills', type: 'anchor' },
+        { name: 'About',    x: 210, y: 30, radius: 5, target: '#about', type: 'anchor' },
+        { name: 'Contact',  x: 290, y: 30, radius: 5, target: '#contact', type: 'anchor' },
+        { name: 'CV',       x: 370, y: 30, radius: 4, target: 'cv.html', type: 'page' } // This one is a page link
+    ];
+
+    starmapCanvas.addEventListener('mousemove', onStarmapMouseMove);
+    starmapCanvas.addEventListener('click', onStarmapClick);
+    starmapCanvas.addEventListener('mouseleave', onStarmapMouseLeave);
+}
+
+function animateStarmap() {
+    if (!starmapCtx) return;
+
+    starmapCtx.clearRect(0, 0, starmapCanvas.width, starmapCanvas.height);
+
+    // Draw constellation lines
+    starmapCtx.beginPath();
+    starmapCtx.moveTo(starmapStars[0].x, starmapStars[0].y);
+    for (let i = 1; i < starmapStars.length; i++) {
+        starmapCtx.lineTo(starmapStars[i].x, starmapStars[i].y);
+    }
+    starmapCtx.strokeStyle = 'rgba(76, 201, 240, 0.2)';
+    starmapCtx.stroke();
+
+    // Draw each star
+    starmapStars.forEach(star => {
+        const isHovered = (star === hoveredStar);
+
+        starmapCtx.beginPath();
+        starmapCtx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+
+        // Glowing effect
+        if (isHovered) {
+            starmapCtx.shadowColor = '#90e0ef';
+            starmapCtx.shadowBlur = 15;
+            starmapCtx.fillStyle = '#ffffff';
+        } else {
+            starmapCtx.shadowColor = '#4cc9f0';
+            starmapCtx.shadowBlur = 10;
+            starmapCtx.fillStyle = '#90e0ef';
+        }
+        starmapCtx.fill();
+        starmapCtx.shadowBlur = 0; // Reset shadow blur
+
+        // Draw name on hover
+        if (isHovered) {
+            starmapCtx.fillStyle = '#e0f7fa';
+            starmapCtx.font = "12px Orbitron";
+            starmapCtx.textAlign = 'center';
+            starmapCtx.fillText(star.name, star.x, star.y - 15);
+        }
+    });
+}
+
+function onStarmapMouseMove(e) {
+    const rect = starmapCanvas.getBoundingClientRect();
+    starmapMouse.x = e.clientX - rect.left;
+    starmapMouse.y = e.clientY - rect.top;
+
+    let isOverAnyStar = false;
+    for (const star of starmapStars) {
+        const dist = Math.sqrt(Math.pow(starmapMouse.x - star.x, 2) + Math.pow(starmapMouse.y - star.y, 2));
+        if (dist < star.radius + 5) { // Add a small buffer for easier hovering
+            hoveredStar = star;
+            isOverAnyStar = true;
+            break;
+        }
+    }
+
+    if (!isOverAnyStar) {
+        hoveredStar = null;
+    }
+}
+
+function onStarmapClick() {
+    if (hoveredStar) {
+        playSound('ui-open-sound'); // Use your existing sound function
+        if (hoveredStar.type === 'page') {
+            // This is a link to another page like cv.html
+            pageTransition(hoveredStar.target); // Use your existing page transition function
+        } else if (hoveredStar.type === 'anchor') {
+            // This is a smooth scroll link on the same page
+            const targetElement = document.querySelector(hoveredStar.target);
+            if (targetElement && scrollableContent) {
+                const maxScroll = scrollableContent.scrollHeight - window.innerHeight;
+                let targetPosition = targetElement.offsetTop - 80;
+                targetScroll = Math.max(0, Math.min(targetPosition, maxScroll));
+            }
+        }
+    }
+}
+
+function onStarmapMouseLeave() {
+    hoveredStar = null;
+}
+
+
 // --- MODAL 3D SCENE ---
 let modalScene, modalCamera, modalRenderer, modalMesh, modalControls, isModal3DActive = false, modalClock;
 function initModal3DScene() {
@@ -683,7 +794,7 @@ function initMotionDesign() {
 }
 
 
-// --- Reverted: Original Interactive Elements animation logic ---
+// --- Interactive Elements animation logic ---
 function handleInteractiveElements() {
     if (interactiveElements.length === 0) return;
 
@@ -754,7 +865,10 @@ function animate() {
     updateCustomScrollbar();
     handleScrollToTopButton();
 
-    // Reverted: Removed call to handleScrollAnimations()
+    if (starmapCanvas) {
+        animateStarmap();
+    }
+
     if (interactiveElements.length > 0) handleInteractiveElements();
 
     // Existing Background & 3D Scene Animation Logic
@@ -814,9 +928,14 @@ function onWindowResize() {
 }
 
 function onThreeMouseMove(event) {
-    if(threeMouse) {
-        threeMouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        threeMouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    const canvas = document.getElementById('sphereCanvas');
+    if (threeMouse && canvas) {
+        const rect = canvas.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+
+        threeMouse.x = (x / rect.width) * 2 - 1;
+        threeMouse.y = -(y / rect.height) * 2 + 1;
     }
 }
 
@@ -898,7 +1017,6 @@ document.addEventListener('DOMContentLoaded', () => {
     transitionContainer = document.getElementById('transition-container');
     transitionCanvas = document.getElementById('transition-canvas');
     
-    // BUG FIX: Assign button and circle elements from the DOM
     scrollToTopBtn = document.getElementById('scrollToTopBtn');
     progressCircle = document.querySelector('.scroll-to-top .progress-ring__circle');
     
@@ -913,7 +1031,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.style.height = `${scrollableContent.scrollHeight}px`;
     }
 
-    // BUG FIX: Check if elements exist before setting them up
     if (scrollToTopBtn && progressCircle) {
         radius = progressCircle.r.baseVal.value;
         circumference = radius * 2 * Math.PI;
@@ -947,14 +1064,14 @@ document.addEventListener('DOMContentLoaded', () => {
         animateTransition('out', () => {
             transitionContainer.classList.remove('active');
             if (currentContent) currentContent.style.opacity = '1';
-            onWindowResize(); // FIX: Recalculate dimensions
+            onWindowResize();
         }, direction);
 
     } else if (hasVisited) {
         if (loader) loader.remove();
         body.classList.remove('loading');
         if (currentContent) currentContent.style.opacity = '1';
-        onWindowResize(); // FIX: Recalculate dimensions
+        onWindowResize();
 
     } else {
         if (isMainPage) {
@@ -979,7 +1096,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             if (body) body.classList.remove('loading');
                             if (currentContent) currentContent.style.opacity = '1';
                             
-                            // FIX: Recalculate layout properties after content is visible
                             onWindowResize();
 
                             if (introSound && !introSound.paused) {
@@ -1001,16 +1117,15 @@ document.addEventListener('DOMContentLoaded', () => {
             body.classList.remove('loading');
             if (currentContent) currentContent.style.opacity = '1';
             sessionStorage.setItem('hasVisited', 'true');
-            onWindowResize(); // FIX: Recalculate dimensions for CV page on first load
+            onWindowResize();
         }
     }
 
     if (isMainPage) {
         setupMainScene();
         setupBackgroundCanvas();
+        setupStarmap();
 
-        // --- SETUP INTERACTIVE ELEMENTS ---
-        // Reverted: Removed opacity properties from the item object
         document.querySelectorAll('.project-card, .skill-item').forEach(el => {
             const item = {
                 el: el,
@@ -1019,12 +1134,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 isHovering: false,
                 hoverTy: el.classList.contains('skill-item') ? -10 : 0,
                 hoverScale: el.classList.contains('project-card') ? 1.05 : 1,
-                ease: 0.08 // A slightly faster ease looks better without scroll animations
+                ease: 0.08
             };
             interactiveElements.push(item);
         });
-
-        // Reverted: Removed scrollAnimatedElements population
         
         animate();
     } else if (isCvPage) {
@@ -1238,7 +1351,6 @@ document.addEventListener('DOMContentLoaded', () => {
         window.addEventListener('mousemove', onThreeMouseMove);
         window.addEventListener('wheel', handleWheel, { passive: false });
     } else {
-        // --- TOUCH EVENTS FOR MOBILE SCROLLING ---
         window.addEventListener('touchstart', (e) => {
             if (document.body.classList.contains('modal-open')) return;
             isTouching = true;
@@ -1268,11 +1380,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     if (document.getElementById('sphereCanvas')) {
-        document.getElementById('sphereCanvas').addEventListener('click', () => {
-            if (intersects && intersects.length > 0) {
-                const { sphere } = mainSceneElements; const uniforms = sphere.material.uniforms;
-                uniforms.uClickPos.value.copy(intersects[0].point);
-                uniforms.uClickTime.value = uniforms.time.value;
+        document.getElementById('sphereCanvas').addEventListener('click', (event) => {
+            const canvas = document.getElementById('sphereCanvas');
+            if (threeMouse && canvas && raycaster && camera && mainSceneElements.sphere) {
+                const rect = canvas.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const y = event.clientY - rect.top;
+
+                threeMouse.x = (x / rect.width) * 2 - 1;
+                threeMouse.y = -(y / rect.height) * 2 + 1;
+            
+                raycaster.setFromCamera(threeMouse, camera);
+            
+                const clickIntersects = raycaster.intersectObject(mainSceneElements.sphere);
+
+                if (clickIntersects && clickIntersects.length > 0) {
+                    const uniforms = mainSceneElements.sphere.material.uniforms;
+                    uniforms.uClickPos.value.copy(clickIntersects[0].point);
+                    uniforms.uClickTime.value = uniforms.time.value;
+                }
             }
         });
     }
@@ -1354,7 +1480,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (modal) modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
     }
 
-    // --- UPDATED: VIDEO MODAL LOGIC ---
+    // --- VIDEO MODAL LOGIC ---
     const videoModal = document.getElementById('video-modal');
     const videoModalCloseBtn = document.querySelector('.video-modal-close');
     const videoContainer = document.querySelector('.video-container');
@@ -1364,7 +1490,7 @@ document.addEventListener('DOMContentLoaded', () => {
         playSound('ui-close-sound');
         document.body.classList.remove('modal-open');
         videoModal.classList.remove('active');
-        videoContainer.innerHTML = ''; // Remove the iframe to stop video playback
+        videoContainer.innerHTML = '';
     }
 
     videoProjectCards.forEach(card => {
@@ -1373,11 +1499,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const videoId = card.dataset.videoId;
             if (!videoId) return;
             
-            // --- FIX STARTS HERE ---
-            // Before: The URL was 'https://www.youtube.com/embed/${videoId}' which is incorrect.
-            // After: The URL is now the standard 'https://www.youtube.com/embed/${videoId}'
             videoContainer.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
-            // --- FIX ENDS HERE ---
 
             document.body.classList.add('modal-open');
             videoModal.classList.add('active');
@@ -1389,6 +1511,96 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === videoModal) closeVideoModal();
     });
     
+    // --- IMAGE MODAL LOGIC ---
+    const imageModal = document.getElementById('image-modal');
+    const imageModalCloseBtn = imageModal.querySelector('.image-modal-close');
+    const imageContainer = imageModal.querySelector('.image-container');
+    const imageProjectCards = document.querySelectorAll('.image-project-card');
+
+    function closeImageModal() {
+        playSound('ui-close-sound');
+        document.body.classList.remove('modal-open');
+        imageModal.classList.remove('active');
+        imageContainer.innerHTML = ''; // Clear the image
+    }
+
+    imageProjectCards.forEach(card => {
+        card.addEventListener('click', (e) => {
+            e.preventDefault();
+            playSound('ui-open-sound');
+
+            const imageElement = card.querySelector('.project-img img');
+            if (!imageElement) return;
+
+            const imageSrc = imageElement.src;
+            
+            imageContainer.innerHTML = `<img src="${imageSrc}" alt="Enlarged project image">`;
+
+            document.body.classList.add('modal-open');
+            imageModal.classList.add('active');
+        });
+    });
+    
+    if (imageModalCloseBtn) imageModalCloseBtn.addEventListener('click', closeImageModal);
+    if (imageModal) imageModal.addEventListener('click', (e) => {
+        if (e.target === imageModal) closeImageModal();
+    });
+    
+    // --- CONTACT FORM LOGIC ---
+    const contactForm = document.getElementById('contact-form');
+
+    if(contactForm) {
+        const formStatus = document.getElementById('form-status');
+        const submitBtn = contactForm.querySelector('button[type="submit"]');
+
+        contactForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const data = new FormData(form);
+            const originalBtnHTML = submitBtn.innerHTML;
+            
+            // 1. Disable button and show spinner
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `Sending... <i class="fas fa-spinner fa-spin"></i>`;
+            formStatus.textContent = ''; // Clear previous status
+
+            try {
+                const response = await fetch(form.action, {
+                    method: form.method,
+                    body: data,
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                if (response.ok) {
+                    formStatus.textContent = 'Message sent successfully! Thank you.';
+                    formStatus.style.color = '#26a69a'; // A nice green color
+                    form.reset();
+                } else {
+                    const responseData = await response.json();
+                    if (Object.hasOwn(responseData, 'errors')) {
+                        formStatus.textContent = responseData.errors.map(error => error.message).join(", ");
+                    } else {
+                        formStatus.textContent = 'Oops! There was a problem sending your message.';
+                    }
+                    formStatus.style.color = '#ef5350'; // A nice red color
+                }
+            } catch (error) {
+                formStatus.textContent = 'Oops! There was a problem sending your message.';
+                formStatus.style.color = '#ef5350'; // A nice red color
+            } finally {
+                // 2. Re-enable button and restore original text
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnHTML;
+                
+                // 3. Clear the status message after a few seconds
+                setTimeout(() => {
+                    formStatus.textContent = '';
+                    formStatus.style.color = '#4cc9f0'; // Reset to default color
+                }, 5000);
+            }
+        });
+    }
+
     const glitchWrapper = document.querySelector('.glitch-wrapper');
     if (glitchWrapper) {
         const glitchElement = document.querySelector('.glitch');
@@ -1459,7 +1671,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Add this to the bottom of your script.js
 // Mobile Navigation Toggle
 const mobileNavToggle = document.getElementById('mobileNavToggle');
 const mobileNav = document.getElementById('mobileNav');
@@ -1479,32 +1690,7 @@ if (mobileNavToggle && mobileNav && mobileNavOverlay) {
         document.body.classList.remove('nav-open');
     });
 }
-// BUG FIX: Corrected touch support for scrollable content
-window.addEventListener('touchstart', (e) => {
-    if (document.body.classList.contains('modal-open')) return;
-    isTouching = true;
-    touchStartY = e.touches[0].clientY;
-    lastTouchY = touchStartY;
-}, { passive: false });
 
-window.addEventListener('touchmove', (e) => {
-    if (!isTouching || document.body.classList.contains('modal-open')) return;
-    e.preventDefault();
-    const touchY = e.touches[0].clientY;
-    const deltaY = lastTouchY - touchY;
-    lastTouchY = touchY;
-
-    targetScroll += deltaY;
-
-    if (scrollableContent) {
-        const maxScroll = scrollableContent.scrollHeight - window.innerHeight;
-        targetScroll = Math.max(0, Math.min(targetScroll, maxScroll));
-    }
-}, { passive: false });
-
-window.addEventListener('touchend', () => {
-    isTouching = false;
-});
 // Mobile-specific optimizations
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 if (isMobile) {
