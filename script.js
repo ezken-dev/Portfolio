@@ -439,119 +439,6 @@ function setupMainScene() {
     mainSceneElements = { sphere, atmosphere, starRings, innerParticlesMesh };
 }
 
-// --- STARMAP NAVIGATION ---
-let starmapCanvas, starmapCtx, starmapStars = [], starmapMouse = { x: 0, y: 0 }, hoveredStar = null;
-
-function setupStarmap() {
-    starmapCanvas = document.getElementById('starmap-canvas');
-    if (!starmapCanvas) return;
-
-    starmapCtx = starmapCanvas.getContext('2d');
-    starmapCanvas.width = 400;
-    starmapCanvas.height = 60;
-
-    // Define our navigation "stars"
-    // Types: 'anchor' for smooth scrolling, 'page' for page transitions
-    starmapStars = [
-        { name: 'Projects', x: 50,  y: 30, radius: 5, target: '#projects', type: 'anchor' },
-        { name: 'Skills',   x: 130, y: 30, radius: 5, target: '#skills', type: 'anchor' },
-        { name: 'About',    x: 210, y: 30, radius: 5, target: '#about', type: 'anchor' },
-        { name: 'Contact',  x: 290, y: 30, radius: 5, target: '#contact', type: 'anchor' },
-        { name: 'CV',       x: 370, y: 30, radius: 4, target: 'cv.html', type: 'page' } // This one is a page link
-    ];
-
-    starmapCanvas.addEventListener('mousemove', onStarmapMouseMove);
-    starmapCanvas.addEventListener('click', onStarmapClick);
-    starmapCanvas.addEventListener('mouseleave', onStarmapMouseLeave);
-}
-
-function animateStarmap() {
-    if (!starmapCtx) return;
-
-    starmapCtx.clearRect(0, 0, starmapCanvas.width, starmapCanvas.height);
-
-    // Draw constellation lines
-    starmapCtx.beginPath();
-    starmapCtx.moveTo(starmapStars[0].x, starmapStars[0].y);
-    for (let i = 1; i < starmapStars.length; i++) {
-        starmapCtx.lineTo(starmapStars[i].x, starmapStars[i].y);
-    }
-    starmapCtx.strokeStyle = 'rgba(76, 201, 240, 0.2)';
-    starmapCtx.stroke();
-
-    // Draw each star
-    starmapStars.forEach(star => {
-        const isHovered = (star === hoveredStar);
-
-        starmapCtx.beginPath();
-        starmapCtx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-
-        // Glowing effect
-        if (isHovered) {
-            starmapCtx.shadowColor = '#90e0ef';
-            starmapCtx.shadowBlur = 15;
-            starmapCtx.fillStyle = '#ffffff';
-        } else {
-            starmapCtx.shadowColor = '#4cc9f0';
-            starmapCtx.shadowBlur = 10;
-            starmapCtx.fillStyle = '#90e0ef';
-        }
-        starmapCtx.fill();
-        starmapCtx.shadowBlur = 0; // Reset shadow blur
-
-        // Draw name on hover
-        if (isHovered) {
-            starmapCtx.fillStyle = '#e0f7fa';
-            starmapCtx.font = "12px Orbitron";
-            starmapCtx.textAlign = 'center';
-            starmapCtx.fillText(star.name, star.x, star.y - 15);
-        }
-    });
-}
-
-function onStarmapMouseMove(e) {
-    const rect = starmapCanvas.getBoundingClientRect();
-    starmapMouse.x = e.clientX - rect.left;
-    starmapMouse.y = e.clientY - rect.top;
-
-    let isOverAnyStar = false;
-    for (const star of starmapStars) {
-        const dist = Math.sqrt(Math.pow(starmapMouse.x - star.x, 2) + Math.pow(starmapMouse.y - star.y, 2));
-        if (dist < star.radius + 5) { // Add a small buffer for easier hovering
-            hoveredStar = star;
-            isOverAnyStar = true;
-            break;
-        }
-    }
-
-    if (!isOverAnyStar) {
-        hoveredStar = null;
-    }
-}
-
-function onStarmapClick() {
-    if (hoveredStar) {
-        playSound('ui-open-sound'); // Use your existing sound function
-        if (hoveredStar.type === 'page') {
-            // This is a link to another page like cv.html
-            pageTransition(hoveredStar.target); // Use your existing page transition function
-        } else if (hoveredStar.type === 'anchor') {
-            // This is a smooth scroll link on the same page
-            const targetElement = document.querySelector(hoveredStar.target);
-            if (targetElement && scrollableContent) {
-                const maxScroll = scrollableContent.scrollHeight - window.innerHeight;
-                let targetPosition = targetElement.offsetTop - 80;
-                targetScroll = Math.max(0, Math.min(targetPosition, maxScroll));
-            }
-        }
-    }
-}
-
-function onStarmapMouseLeave() {
-    hoveredStar = null;
-}
-
-
 // --- MODAL 3D SCENE ---
 let modalScene, modalCamera, modalRenderer, modalMesh, modalControls, isModal3DActive = false, modalClock;
 function initModal3DScene() {
@@ -832,19 +719,22 @@ function handleInteractiveElements() {
 
 // --- Scroll to Top Button Logic ---
 function handleScrollToTopButton() {
-    if (!scrollableContent || !scrollToTopBtn || !progressCircle) return;
+    if (!scrollToTopBtn || !progressCircle) return;
+    
+    // Use native scroll position for mobile, or custom for desktop
+    const currentY = document.body.classList.contains('mobile-scroll') ? window.scrollY : currentScroll;
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
 
-    const maxScroll = scrollableContent.scrollHeight - window.innerHeight;
     if (maxScroll <= 0) {
         scrollToTopBtn.classList.remove('visible');
         return;
     };
 
-    const scrollFraction = currentScroll / maxScroll;
+    const scrollFraction = currentY / maxScroll;
     const offset = circumference - scrollFraction * circumference;
     progressCircle.style.strokeDashoffset = offset;
 
-    if (currentScroll > window.innerHeight / 2) {
+    if (currentY > window.innerHeight / 2) {
         scrollToTopBtn.classList.add('visible');
     } else {
         scrollToTopBtn.classList.remove('visible');
@@ -853,23 +743,26 @@ function handleScrollToTopButton() {
 
 // --- MAIN ANIMATION LOOP & EVENT LISTENERS ---
 function animate() {
-    // Smooth Scroll Logic
-    currentScroll += (targetScroll - currentScroll) * ease;
-    if (Math.abs(targetScroll - currentScroll) < 0.1) {
-        currentScroll = targetScroll;
+    const isMobile = document.body.classList.contains('mobile-scroll');
+    
+    if (!isMobile) {
+        // Smooth Scroll Logic for Desktop
+        currentScroll += (targetScroll - currentScroll) * ease;
+        if (Math.abs(targetScroll - currentScroll) < 0.1) {
+            currentScroll = targetScroll;
+        }
+        
+        if (scrollableContent) {
+            scrollableContent.style.transform = `translate3d(0, -${currentScroll}px, 0)`;
+        }
+        updateCustomScrollbar();
     }
     
-    if (scrollableContent) {
-        scrollableContent.style.transform = `translate3d(0, -${currentScroll}px, 0)`;
-    }
-    updateCustomScrollbar();
     handleScrollToTopButton();
 
-    if (starmapCanvas) {
-        animateStarmap();
+    if (!isMobile && interactiveElements.length > 0) {
+        handleInteractiveElements();
     }
-
-    if (interactiveElements.length > 0) handleInteractiveElements();
 
     // Existing Background & 3D Scene Animation Logic
     if (backgroundCanvas) drawBackground();
@@ -907,9 +800,13 @@ function animate() {
 
 
 function onWindowResize() {
-    if (scrollableContent) {
+    const isMobile = document.body.classList.contains('mobile-scroll');
+    if (!isMobile && scrollableContent) {
         document.body.style.height = `${scrollableContent.scrollHeight}px`;
+    } else {
+        document.body.style.height = 'auto';
     }
+
     if (backgroundCanvas) setupBackgroundCanvas();
     if (renderer) {
         const newCanvasSize = Math.min(window.innerWidth * 0.5, 500);
@@ -924,7 +821,9 @@ function onWindowResize() {
             modalRenderer.setSize(canvas.clientWidth, canvas.clientHeight);
         }
     }
-    updateCustomScrollbar();
+    if (!isMobile) {
+      updateCustomScrollbar();
+    }
 }
 
 function onThreeMouseMove(event) {
@@ -1018,16 +917,25 @@ document.addEventListener('DOMContentLoaded', () => {
     transitionCanvas = document.getElementById('transition-canvas');
     
     scrollToTopBtn = document.getElementById('scrollToTopBtn');
-    progressCircle = document.querySelector('.scroll-to-top .progress-ring__circle');
+    if (scrollToTopBtn) {
+        progressCircle = scrollToTopBtn.querySelector('.progress-ring__circle');
+    }
     
     const isMainPage = mainContentWrapper !== null;
     const isCvPage = cvDatapadWrapper !== null;
     const loader = document.getElementById('loader');
     const body = document.body;
-    const isMobile = 'ontouchstart' in window;
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth <= 900;
+
+    // *** NEW: APPLY MOBILE FIX ***
+    if (isMobile) {
+        body.classList.add('mobile-scroll');
+    }
 
     scrollableContent = mainContentWrapper || (cvDatapadWrapper ? cvDatapadWrapper.parentElement : null);
-    if (scrollableContent) {
+
+    // *** MODIFIED: Only set body height for desktop scrolling ***
+    if (!isMobile && scrollableContent) {
         document.body.style.height = `${scrollableContent.scrollHeight}px`;
     }
 
@@ -1038,9 +946,18 @@ document.addEventListener('DOMContentLoaded', () => {
         progressCircle.style.strokeDashoffset = circumference;
 
         scrollToTopBtn.addEventListener('click', () => {
-            targetScroll = 0;
+            if (isMobile) {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                targetScroll = 0;
+            }
             playSound('ui-close-sound');
         });
+
+        // *** NEW: Add native scroll listener for mobile for scroll-to-top button ***
+        if (isMobile) {
+            window.addEventListener('scroll', handleScrollToTopButton);
+        }
     }
 
     const isTransitioning = sessionStorage.getItem('isTransitioning') === 'true';
@@ -1124,20 +1041,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if (isMainPage) {
         setupMainScene();
         setupBackgroundCanvas();
-        setupStarmap();
 
-        document.querySelectorAll('.project-card, .skill-item').forEach(el => {
-            const item = {
-                el: el,
-                cx: 0, cy: 0, scale: 1,
-                target: { tx: 0, ty: 0, scale: 1 },
-                isHovering: false,
-                hoverTy: el.classList.contains('skill-item') ? -10 : 0,
-                hoverScale: el.classList.contains('project-card') ? 1.05 : 1,
-                ease: 0.08
-            };
-            interactiveElements.push(item);
-        });
+        if (!isMobile) {
+            document.querySelectorAll('.project-card, .skill-item').forEach(el => {
+                const item = {
+                    el: el,
+                    cx: 0, cy: 0, scale: 1,
+                    target: { tx: 0, ty: 0, scale: 1 },
+                    isHovering: false,
+                    hoverTy: el.classList.contains('skill-item') ? -10 : 0,
+                    hoverScale: el.classList.contains('project-card') ? 1.05 : 1,
+                    ease: 0.08
+                };
+                interactiveElements.push(item);
+            });
+        }
         
         animate();
     } else if (isCvPage) {
@@ -1145,7 +1063,7 @@ document.addEventListener('DOMContentLoaded', () => {
         animate(); 
 
         const datapad = document.querySelector('.cv-datapad');
-        if (datapad) {
+        if (datapad && !isMobile) {
             datapad.style.transition = 'transform 0.1s ease-out';
             let smoothMouseX = 0, smoothMouseY = 0;
             let currentX = 0, currentY = 0;
@@ -1347,20 +1265,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.addEventListener('resize', onWindowResize);
 
+    // *** MODIFIED: Only add desktop scroll listeners if not mobile ***
     if (!isMobile) {
         window.addEventListener('mousemove', onThreeMouseMove);
         window.addEventListener('wheel', handleWheel, { passive: false });
-    } else {
+
+        // Custom touch scrolling for desktop touch screens
         window.addEventListener('touchstart', (e) => {
             if (document.body.classList.contains('modal-open')) return;
             isTouching = true;
             touchStartY = e.touches[0].clientY;
             lastTouchY = touchStartY;
-        }, { passive: false });
+        }, { passive: true });
 
         window.addEventListener('touchmove', (e) => {
             if (!isTouching || document.body.classList.contains('modal-open')) return;
-            e.preventDefault();
+            // No e.preventDefault() here to allow native touch actions if needed elsewhere
             const touchY = e.touches[0].clientY;
             const deltaY = lastTouchY - touchY;
             lastTouchY = touchY;
@@ -1371,13 +1291,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 const maxScroll = scrollableContent.scrollHeight - window.innerHeight;
                 targetScroll = Math.max(0, Math.min(targetScroll, maxScroll));
             }
-        }, { passive: false });
+        }, { passive: true });
 
         window.addEventListener('touchend', () => {
             isTouching = false;
-        }, { passive: false });
+        }, { passive: true });
     }
-
 
     if (document.getElementById('sphereCanvas')) {
         document.getElementById('sphereCanvas').addEventListener('click', (event) => {
@@ -1409,10 +1328,18 @@ document.addEventListener('DOMContentLoaded', () => {
             if (this.getAttribute('href') !== '#') {
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
-                if (target && scrollableContent) {
-                    const maxScroll = scrollableContent.scrollHeight - window.innerHeight;
-                    let targetPosition = target.offsetTop - 80;
-                    targetScroll = Math.max(0, Math.min(targetPosition, maxScroll));
+                if (target) {
+                    if (isMobile) {
+                        const yOffset = -80; 
+                        const y = target.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                        window.scrollTo({top: y, behavior: 'smooth'});
+                    } else {
+                        if (scrollableContent) {
+                            const maxScroll = scrollableContent.scrollHeight - window.innerHeight;
+                            let targetPosition = target.offsetTop - 80;
+                            targetScroll = Math.max(0, Math.min(targetPosition, maxScroll));
+                        }
+                    }
                 }
             }
         });
@@ -1454,7 +1381,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (modalDescription) modalDescription.textContent = description;
                 hideAllInteractives();
 
-                if (interactives[title]) interactives[title].style.display = 'block';
+                if (interactives[title]) {
+                    if (title === 'Graphics Designing') {
+                        interactives[title].style.display = 'flex';
+                    } else {
+                        interactives[title].style.display = 'block';
+                    }
+                }
 
                 switch(title) {
                     case '3D Development':
@@ -1559,10 +1492,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = new FormData(form);
             const originalBtnHTML = submitBtn.innerHTML;
             
-            // 1. Disable button and show spinner
             submitBtn.disabled = true;
             submitBtn.innerHTML = `Sending... <i class="fas fa-spinner fa-spin"></i>`;
-            formStatus.textContent = ''; // Clear previous status
+            formStatus.textContent = '';
 
             try {
                 const response = await fetch(form.action, {
@@ -1573,7 +1505,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (response.ok) {
                     formStatus.textContent = 'Message sent successfully! Thank you.';
-                    formStatus.style.color = '#26a69a'; // A nice green color
+                    formStatus.style.color = '#26a69a';
                     form.reset();
                 } else {
                     const responseData = await response.json();
@@ -1582,27 +1514,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     } else {
                         formStatus.textContent = 'Oops! There was a problem sending your message.';
                     }
-                    formStatus.style.color = '#ef5350'; // A nice red color
+                    formStatus.style.color = '#ef5350';
                 }
             } catch (error) {
                 formStatus.textContent = 'Oops! There was a problem sending your message.';
-                formStatus.style.color = '#ef5350'; // A nice red color
+                formStatus.style.color = '#ef5350';
             } finally {
-                // 2. Re-enable button and restore original text
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalBtnHTML;
                 
-                // 3. Clear the status message after a few seconds
                 setTimeout(() => {
                     formStatus.textContent = '';
-                    formStatus.style.color = '#4cc9f0'; // Reset to default color
+                    formStatus.style.color = '#4cc9f0';
                 }, 5000);
             }
         });
     }
 
     const glitchWrapper = document.querySelector('.glitch-wrapper');
-    if (glitchWrapper) {
+    if (glitchWrapper && !isMobile) {
         const glitchElement = document.querySelector('.glitch');
         let isGlitching = false;
         const triggerGlitch = () => {
@@ -1692,7 +1622,7 @@ if (mobileNavToggle && mobileNav && mobileNavOverlay) {
 }
 
 // Mobile-specific optimizations
-const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth <= 900;
 if (isMobile) {
     // Disable cursor effects on mobile
     const cursor = document.querySelector('.cursor');
@@ -1702,7 +1632,7 @@ if (isMobile) {
     
     // Simplify 3D effects for mobile
     if (mainSceneElements && mainSceneElements.sphere) {
-        mainSceneElements.sphere.material.uniforms.uHover.value = 0;
+        // This check might run before mainSceneElements is populated, so we guard it
     }
     
     // Adjust loader for mobile

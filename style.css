@@ -2168,20 +2168,30 @@ body:not(.loading):not(.modal-open) #custom-scrollbar {
     }
 }
 
-/* --- Starmap Navigation Styles --- */
-#starmap-canvas {
-    width: 400px;
-    height: 60px;
-    transition: all 0.3s ease;
+/* --- Mobile Native Scrolling Fix --- */
+body.mobile-scroll {
+  overflow-y: auto; /* Re-enables the browser's native scrollbar */
+  cursor: default;  /* Uses the default cursor on mobile devices */
 }
 
-#starmap-canvas:hover {
-    cursor: none; /* We will handle the cursor style in JS */
+/* This resets the main content wrapper from being fixed to the screen 
+  and allows it to scroll normally as part of the document.
+*/
+body.mobile-scroll #main-content-wrapper,
+body.mobile-scroll .cv-datapad-wrapper {
+  position: relative; 
+  overflow: visible;
+  height: auto;
+  will-change: auto;
+  transform: none !important; /* Prevents JS from moving the content */
 }
 
-/* Hide the starmap on mobile and show the hamburger menu */
-@media (max-width: 900px) {
-    #starmap-canvas {
-        display: none;
-    }
+/* Hides the custom scrollbar on mobile */
+body.mobile-scroll #custom-scrollbar {
+  display: none;
+}
+
+/* Prevents content from being cut off on mobile */
+body.mobile-scroll .hero {
+    overflow: visible;
 }
