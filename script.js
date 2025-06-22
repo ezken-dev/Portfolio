@@ -37,6 +37,12 @@ let isSlowingDown = false;
 let loaderStartTime;
 let isEngineStarted = false;
 
+// --- CANVAS BACKGROUND ---
+// Moved this variable declaration higher to be globally accessible
+let backgroundCanvas = null; 
+let bgCtx;
+let bgStars = [];
+
 function initAndAnimateLoader() {
     if (!loaderCanvas) return;
     loaderCtx = loaderCanvas.getContext('2d');
@@ -117,7 +123,7 @@ function animateLoader() {
 }
 
 
-// --- PAGE TRANSITION LOGIC ---
+// --- PAGE TRANSITION LOGIC (FIXED) ---
 function initTransitionCanvas() {
     if (!transitionCanvas) return;
     transitionCtx = transitionCanvas.getContext('2d');
@@ -135,6 +141,14 @@ function initTransitionCanvas() {
 
 function animateTransition(phase, onComplete, direction = 'forward') {
     if (!transitionCtx || !transitionCanvas) return;
+    
+    // ======================= FIX PART 1 =======================
+    // This ensures the beautiful gradient background is drawn on every
+    // frame of the transition, underneath the "warp speed" stars.
+    if (backgroundCanvas && bgCtx) {
+        drawBackground();
+    }
+    // ===================== END OF FIX PART 1 ====================
 
     if (phase === 'in') {
         transitionSpeed += 0.25; 
@@ -201,6 +215,7 @@ function animateTransition(phase, onComplete, direction = 'forward') {
         if (onComplete) onComplete();
     }
 }
+
 
 function pageTransition(destinationUrl, direction = 'forward') {
     if (!transitionContainer) return;
@@ -294,11 +309,6 @@ function createCursorParticle(x, y) {
     setTimeout(() => { particle.remove(); }, 1000);
 }
 
-
-// --- CANVAS BACKGROUND ---
-const backgroundCanvas = document.getElementById('background-canvas');
-let bgCtx;
-let bgStars = [];
 
 function setupBackgroundCanvas() {
     if (!backgroundCanvas) return;
@@ -909,7 +919,7 @@ function updateCustomScrollbar() {
 }
 
 
-// --- Main Script Initialization ---
+// --- Main Script Initialization (FIXED) ---
 document.addEventListener('DOMContentLoaded', () => {
     mainContentWrapper = document.getElementById('main-content-wrapper');
     cvDatapadWrapper = document.querySelector('.cv-datapad');
@@ -970,6 +980,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (loader) loader.remove();
         body.classList.remove('loading');
         
+        // ======================= FIX PART 2 =======================
+        // If we are arriving on a page with a background, we must
+        // initialize it so it can be drawn during the transition.
+        backgroundCanvas = document.getElementById('background-canvas');
+        if (backgroundCanvas) {
+            setupBackgroundCanvas();
+        }
+        // ===================== END OF FIX PART 2 ====================
+        
         const direction = sessionStorage.getItem('transitionDirection');
         sessionStorage.removeItem('isTransitioning');
         sessionStorage.removeItem('transitionDirection');
@@ -982,13 +1001,31 @@ document.addEventListener('DOMContentLoaded', () => {
             transitionContainer.classList.remove('active');
             if (currentContent) currentContent.style.opacity = '1';
             onWindowResize();
+            
+            // After the transition, start the main animation loop for the page
+            if (isMainPage) {
+                if (!renderer) setupMainScene(); // Ensure 3D scene is set up
+                animate();
+            } else if (isCvPage) {
+                animate();
+            }
+
         }, direction);
 
     } else if (hasVisited) {
         if (loader) loader.remove();
         body.classList.remove('loading');
         if (currentContent) currentContent.style.opacity = '1';
+        backgroundCanvas = document.getElementById('background-canvas');
         onWindowResize();
+        if (isMainPage) {
+            setupMainScene();
+            setupBackgroundCanvas();
+            animate();
+        } else if (isCvPage) {
+            setupBackgroundCanvas();
+            animate();
+        }
 
     } else {
         if (isMainPage) {
@@ -1013,7 +1050,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             if (body) body.classList.remove('loading');
                             if (currentContent) currentContent.style.opacity = '1';
                             
+                            backgroundCanvas = document.getElementById('background-canvas');
                             onWindowResize();
+                            setupMainScene();
+                            setupBackgroundCanvas();
+                            animate();
 
                             if (introSound && !introSound.paused) {
                                 let vol = introSound.volume;
@@ -1034,34 +1075,17 @@ document.addEventListener('DOMContentLoaded', () => {
             body.classList.remove('loading');
             if (currentContent) currentContent.style.opacity = '1';
             sessionStorage.setItem('hasVisited', 'true');
+            backgroundCanvas = document.getElementById('background-canvas');
             onWindowResize();
+            // Start animations for CV page if it's the first visit
+            setupBackgroundCanvas();
+            animate();
         }
     }
 
-    if (isMainPage) {
-        setupMainScene();
-        setupBackgroundCanvas();
-
-        if (!isMobile) {
-            document.querySelectorAll('.project-card, .skill-item').forEach(el => {
-                const item = {
-                    el: el,
-                    cx: 0, cy: 0, scale: 1,
-                    target: { tx: 0, ty: 0, scale: 1 },
-                    isHovering: false,
-                    hoverTy: el.classList.contains('skill-item') ? -10 : 0,
-                    hoverScale: el.classList.contains('project-card') ? 1.05 : 1,
-                    ease: 0.08
-                };
-                interactiveElements.push(item);
-            });
-        }
-        
-        animate();
-    } else if (isCvPage) {
-        setupBackgroundCanvas();
-        animate(); 
-
+    // This logic was moved from the main body of the script into the DOMContentLoaded
+    // event to ensure all elements exist before attaching listeners.
+    if (!isMainPage && isCvPage) {
         const datapad = document.querySelector('.cv-datapad');
         if (datapad && !isMobile) {
             datapad.style.transition = 'transform 0.1s ease-out';
@@ -1265,12 +1289,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.addEventListener('resize', onWindowResize);
 
-    // *** MODIFIED: Only add desktop scroll listeners if not mobile ***
     if (!isMobile) {
         window.addEventListener('mousemove', onThreeMouseMove);
         window.addEventListener('wheel', handleWheel, { passive: false });
 
-        // Custom touch scrolling for desktop touch screens
         window.addEventListener('touchstart', (e) => {
             if (document.body.classList.contains('modal-open')) return;
             isTouching = true;
@@ -1280,7 +1302,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         window.addEventListener('touchmove', (e) => {
             if (!isTouching || document.body.classList.contains('modal-open')) return;
-            // No e.preventDefault() here to allow native touch actions if needed elsewhere
             const touchY = e.touches[0].clientY;
             const deltaY = lastTouchY - touchY;
             lastTouchY = touchY;
@@ -1330,8 +1351,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const target = document.querySelector(this.getAttribute('href'));
                 if (target) {
                     if (isMobile) {
-                        const yOffset = -80; 
-                        const y = target.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                        const y = target.getBoundingClientRect().top + window.pageYOffset;
                         window.scrollTo({top: y, behavior: 'smooth'});
                     } else {
                         if (scrollableContent) {
@@ -1413,7 +1433,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (modal) modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
     }
 
-    // --- VIDEO MODAL LOGIC ---
     const videoModal = document.getElementById('video-modal');
     const videoModalCloseBtn = document.querySelector('.video-modal-close');
     const videoContainer = document.querySelector('.video-container');
@@ -1444,7 +1463,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === videoModal) closeVideoModal();
     });
     
-    // --- IMAGE MODAL LOGIC ---
     const imageModal = document.getElementById('image-modal');
     const imageModalCloseBtn = imageModal.querySelector('.image-modal-close');
     const imageContainer = imageModal.querySelector('.image-container');
@@ -1454,7 +1472,7 @@ document.addEventListener('DOMContentLoaded', () => {
         playSound('ui-close-sound');
         document.body.classList.remove('modal-open');
         imageModal.classList.remove('active');
-        imageContainer.innerHTML = ''; // Clear the image
+        imageContainer.innerHTML = '';
     }
 
     imageProjectCards.forEach(card => {
@@ -1479,9 +1497,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === imageModal) closeImageModal();
     });
     
-    // --- CONTACT FORM LOGIC ---
     const contactForm = document.getElementById('contact-form');
-
     if(contactForm) {
         const formStatus = document.getElementById('form-status');
         const submitBtn = contactForm.querySelector('button[type="submit"]');
@@ -1599,44 +1615,55 @@ document.addEventListener('DOMContentLoaded', () => {
             pageTransition(this.href, direction);
         });
     });
-});
 
-// Mobile Navigation Toggle
-const mobileNavToggle = document.getElementById('mobileNavToggle');
-const mobileNav = document.getElementById('mobileNav');
-const mobileNavOverlay = document.getElementById('mobileNavOverlay');
-if (mobileNavToggle && mobileNav && mobileNavOverlay) {
-    mobileNavToggle.addEventListener('click', () => {
-        mobileNavToggle.classList.toggle('active');
-        mobileNav.classList.toggle('active');
-        mobileNavOverlay.classList.toggle('active');
-        document.body.classList.toggle('nav-open');
-    });
-    
-    mobileNavOverlay.addEventListener('click', () => {
-        mobileNavToggle.classList.remove('active');
-        mobileNav.classList.remove('active');
-        mobileNavOverlay.classList.remove('active');
+    const mobileNavToggle = document.getElementById('mobileNavToggle');
+    const mobileNav = document.getElementById('mobileNav');
+    const mobileNavOverlay = document.getElementById('mobileNavOverlay');
+    const mobileDownloadCvBtn = document.getElementById('mobile-download-cv-btn');
+
+    const closeMobileNav = () => {
+        if (mobileNavToggle) mobileNavToggle.classList.remove('active');
+        if (mobileNav) mobileNav.classList.remove('active');
+        if (mobileNavOverlay) mobileNavOverlay.classList.remove('active');
         document.body.classList.remove('nav-open');
-    });
-}
+    };
 
-// Mobile-specific optimizations
-const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth <= 900;
-if (isMobile) {
-    // Disable cursor effects on mobile
-    const cursor = document.querySelector('.cursor');
-    const cursorFollower = document.querySelector('.cursor-follower');
-    if (cursor) cursor.style.display = 'none';
-    if (cursorFollower) cursorFollower.style.display = 'none';
-    
-    // Simplify 3D effects for mobile
-    if (mainSceneElements && mainSceneElements.sphere) {
-        // This check might run before mainSceneElements is populated, so we guard it
+    if (mobileNavToggle && mobileNav && mobileNavOverlay) {
+        mobileNavToggle.addEventListener('click', () => {
+            mobileNavToggle.classList.toggle('active');
+            mobileNav.classList.toggle('active');
+            mobileNavOverlay.classList.toggle('active');
+            document.body.classList.toggle('nav-open');
+        });
+        
+        mobileNavOverlay.addEventListener('click', closeMobileNav);
+
+        document.querySelectorAll('.mobile-nav-links a').forEach(link => {
+            if (link.id !== 'mobile-download-cv-btn') {
+                link.addEventListener('click', () => {
+                    setTimeout(closeMobileNav, 100);
+                });
+            }
+        });
     }
-    
-    // Adjust loader for mobile
-    if (loaderStars) {
-        loaderStars = loaderStars.slice(0, 300); // Reduce star count
+
+    if (mobileDownloadCvBtn) {
+        mobileDownloadCvBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            playSound('ui-open-sound');
+            window.print();
+            closeMobileNav();
+        });
     }
-}
+
+    if (isMobile) {
+        const el_cursor = document.querySelector('.cursor');
+        const el_cursorFollower = document.querySelector('.cursor-follower');
+        if (el_cursor) el_cursor.style.display = 'none';
+        if (el_cursorFollower) el_cursorFollower.style.display = 'none';
+        
+        if (loaderStars) {
+            loaderStars = loaderStars.slice(0, 300);
+        }
+    }
+});

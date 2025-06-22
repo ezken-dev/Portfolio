@@ -1647,7 +1647,7 @@ body:not(.loading):not(.modal-open) #custom-scrollbar {
     }
 }
 
-/* --- PAGE TRANSITION --- */
+/* --- PAGE TRANSITION (FIXED) --- */
 #transition-container {
     position: fixed;
     top: 0;
@@ -1840,6 +1840,8 @@ body:not(.loading):not(.modal-open) #custom-scrollbar {
     .hero-content {
         max-width: 100%;
         padding-bottom: 3rem;
+        padding-left: 0; /* Fix: Removed desktop padding to allow proper centering */
+        padding-right: 0; /* Fix: Ensured no horizontal padding on the content block itself */
     }
     
     #sphereCanvas {
@@ -1848,7 +1850,7 @@ body:not(.loading):not(.modal-open) #custom-scrollbar {
         right: auto;
         transform: none;
         width: 100%;
-        height: 400px;
+        height: 450px; /* Fix: Increased height from 400px to make it larger on mobile */
         margin-top: 2rem;
     }
     
