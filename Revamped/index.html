@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rifat Ashhab | Executive Portfolio</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons & Tailwind -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 3D Tilt Library & Lenis Smooth Scroll -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.34/dist/lenis.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        theme: {
+                            bg: 'var(--bg-main)',
+                            text: 'var(--text-main)',
+                            muted: 'var(--text-muted)',
+                            card: 'var(--card-bg)',
+                            border: 'var(--card-border)',
+                            nav: 'var(--nav-bg)',
+                            accent: 'var(--accent-color)'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                        display: ['Space Grotesk', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* === DYNAMIC THEME VARIABLES === */
+        :root {
+            /* Dark Mode (Default) */
+            --bg-main: #000000;
+            --text-main: #ffffff;
+            --text-muted: #86868b;
+            --card-bg: rgba(28, 28, 30, 0.4);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --nav-bg: rgba(10, 10, 12, 0.7);
+            --accent-color: #a78bfa;
+            --orb-1: rgba(139, 92, 246, 0.25);
+            --orb-2: rgba(59, 130, 246, 0.15);
+            --shadow-color: rgba(0, 0, 0, 0.5);
+            --logo-grad: linear-gradient(to right, #ffffff, #a78bfa, #3b82f6, #a78bfa, #ffffff);
+            --text-grad: linear-gradient(135deg, #ffffff 0%, #a78bfa 100%);
+            --btn-bg: rgba(255, 255, 255, 0.1);
+            --btn-hover: #ffffff;
+            --btn-hover-text: #000000;
+            --card-glare: rgba(255,255,255,0.06);
+            --badge-bg: rgba(0, 0, 0, 0.6);
+            --cursor-bg: #ffffff;
+            --cursor-blend: difference;
+            --cursor-shadow: rgba(255,255,255,0.5);
+        }
+
+        body.light-mode {
+            /* Apple Premium Light Mode */
+            --bg-main: #fbfbfd;
+            --text-main: #1d1d1f;
+            --text-muted: #86868b;
+            --card-bg: rgba(255, 255, 255, 0.65);
+            --card-border: rgba(0, 0, 0, 0.06);
+            --nav-bg: rgba(255, 255, 255, 0.85);
+            --accent-color: #0066cc;
+            --orb-1: rgba(0, 102, 204, 0.12);
+            --orb-2: rgba(167, 139, 250, 0.12);
+            --shadow-color: rgba(0, 0, 0, 0.04);
+            --logo-grad: linear-gradient(to right, #1d1d1f, #0066cc, #7c3aed, #0066cc, #1d1d1f);
+            --text-grad: linear-gradient(135deg, #1d1d1f 0%, #0066cc 100%);
+            --btn-bg: rgba(0, 0, 0, 0.04);
+            --btn-hover: #1d1d1f;
+            --btn-hover-text: #ffffff;
+            --card-glare: rgba(255,255,255,0.6);
+            --badge-bg: rgba(255, 255, 255, 0.85);
+            --cursor-bg: #1d1d1f;
+            --cursor-blend: normal;
+            --cursor-shadow: rgba(0,0,0,0.1);
+        }
+
+        /* Smooth Crossfade for Structural Elements */
+        body, .glass-panel, .project-card, nav.scrolled, .btn-premium, .btn-primary, .text-gradient, .animated-logo-text {
+            transition: background-color 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
+                        border-color 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                        box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                        color 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                        background 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* === FOUNDATION === */
+        html.lenis { height: auto; }
+        .lenis.lenis-smooth { scroll-behavior: auto; }
+        .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+        .lenis.lenis-stopped { overflow: hidden; }
+        .lenis.lenis-scrolling iframe { pointer-events: none; }
+        
+        body { background-color: var(--bg-main); color: var(--text-main); overflow-x: hidden; cursor: none; -webkit-font-smoothing: antialiased; }
+        body.loading { overflow: hidden; }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-main); }
+        ::-webkit-scrollbar-thumb { background: var(--card-border); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+        /* === CINEMATIC BLUR MORPH (THEME SWITCH) === */
+        .theme-blur-morph {
+            position: fixed; inset: -20%; z-index: 99998; pointer-events: none;
+            opacity: 0; backdrop-filter: blur(0px) saturate(100%); -webkit-backdrop-filter: blur(0px) saturate(100%);
+            transition: backdrop-filter 0.4s cubic-bezier(0.4, 0, 0.2, 1), -webkit-backdrop-filter 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+        }
+        .theme-blur-morph.active {
+            opacity: 1; backdrop-filter: blur(50px) saturate(150%); -webkit-backdrop-filter: blur(50px) saturate(150%);
+        }
+        .theme-glare {
+            position: fixed; pointer-events: none; z-index: 99997; border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0); opacity: 1;
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease;
+        }
+
+        /* Icon Micro-Interaction */
+        .theme-icon-enter { animation: iconPop 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes iconPop { 0% { transform: rotate(-180deg) scale(0.2); opacity: 0; } 100% { transform: rotate(0deg) scale(1); opacity: 1; } }
+
+        /* === ULTRA-PREMIUM ADAPTIVE CURSOR === */
+        :root { --cursor-size: 8px; }
+        .cursor-dot {
+            position: fixed; top: 0; left: 0; width: var(--cursor-size); height: var(--cursor-size);
+            background-color: var(--cursor-bg); border-radius: 50%; pointer-events: none; z-index: 100000;
+            transform: translate(-50%, -50%); transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1), height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s, background-color 0.4s;
+            mix-blend-mode: var(--cursor-blend); display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 15px var(--cursor-shadow);
+        }
+        .cursor-dot::after {
+            content: "EXPLORE"; position: absolute; color: var(--bg-main); font-family: 'Space Grotesk', sans-serif;
+            font-size: 12px; font-weight: 700; letter-spacing: 1px; opacity: 0; transition: opacity 0.2s;
+        }
+        .cursor-dot.hover-link { width: 4px; height: 4px; mix-blend-mode: normal; background-color: var(--accent-color); box-shadow: 0 0 15px var(--accent-color); }
+        .cursor-dot.hover-explore { width: 80px; height: 80px; mix-blend-mode: normal; background-color: var(--text-main); }
+        .cursor-dot.hover-explore::after { opacity: 1; color: var(--bg-main); }
+
+        /* === CONSTANTLY ANIMATED AURA LOGO === */
+        .logo-container { position: relative; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .logo-container:hover { transform: scale(1.08); }
+        .animated-logo-text {
+            position: relative; font-family: 'Space Grotesk', sans-serif; font-weight: 800; letter-spacing: -0.03em;
+            background: var(--logo-grad); background-size: 200% auto; color: transparent; -webkit-background-clip: text; background-clip: text;
+            animation: liquidGradient 4s linear infinite;
+        }
+        .animated-logo-text::before {
+            content: attr(data-text); position: absolute; left: 0; top: 0; z-index: -1;
+            background: var(--logo-grad); background-size: 200% auto; color: transparent; -webkit-background-clip: text; background-clip: text;
+            animation: liquidGradient 4s linear infinite; filter: blur(10px); opacity: 0.6;
+        }
+        .logo-sparkle { color: var(--accent-color); font-size: 0.85em; display: inline-block; animation: rotatePulse 4s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite; transition: color 0.4s; }
+        
+        @keyframes liquidGradient { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
+        @keyframes rotatePulse {
+            0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.7; filter: drop-shadow(0 0 5px var(--accent-color)); }
+            50% { transform: scale(1.3) rotate(180deg); opacity: 1; filter: drop-shadow(0 0 10px var(--text-main)); color: var(--text-main); }
+        }
+
+        /* === AMBIENT BACKGROUND GLOW === */
+        .ambient-orb { position: fixed; border-radius: 50%; filter: blur(140px); opacity: 0.5; z-index: -1; animation: float 20s infinite ease-in-out alternate; pointer-events: none; transition: background 1s ease; }
+        .orb-1 { width: 45vw; height: 45vw; background: radial-gradient(circle, var(--orb-1) 0%, transparent 70%); top: -10%; left: -10%; }
+        .orb-2 { width: 55vw; height: 55vw; background: radial-gradient(circle, var(--orb-2) 0%, transparent 70%); bottom: -20%; right: -10%; animation-delay: -5s; }
+        @keyframes float { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(5%, 10%) scale(1.1); } }
+
+        /* === THE "AURA" LOADER SEQUENCE === */
+        #loader {
+            position: fixed; inset: 0; background: #000; z-index: 99999; display: flex;
+            flex-direction: column; align-items: center; justify-content: center;
+            transition: transform 1.6s cubic-bezier(0.85, 0, 0.15, 1);
+        }
+        .loader-content { text-align: center; display: flex; flex-direction: column; align-items: center; }
+        .counter-wrap { overflow: hidden; height: 120px; position: relative; margin-bottom: 20px; }
+        .loader-counter { font-family: 'Space Grotesk', sans-serif; font-size: 8rem; font-weight: 700; color: #fff; line-height: 120px; transform: translateY(120px); animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .loader-text { font-family: 'Fira Code', monospace; font-size: 0.9rem; color: #86868b; text-transform: uppercase; letter-spacing: 0.2em; height: 20px; overflow: hidden; position: relative; width: 300px; }
+        .loader-text span { position: absolute; width: 100%; left: 0; text-align: center; opacity: 0; transform: translateY(10px); transition: 0.3s all; }
+        .loader-text span.active { opacity: 1; transform: translateY(0); }
+        .progress-bar-container { width: 200px; height: 2px; background: rgba(255,255,255,0.1); margin-top: 2rem; border-radius: 2px; overflow: hidden; }
+        .progress-bar-fill { width: 0%; height: 100%; background: #fff; transition: width 0.1s; }
+        #loader.exit-up { transform: translateY(-100%); }
+
+        /* === APPLE GLASSMORPHISM + MOUSE SPOTLIGHT === */
+        .glass-panel, .project-card {
+            background: var(--card-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--card-border); border-radius: 24px; position: relative; overflow: hidden;
+            box-shadow: 0 10px 40px var(--shadow-color);
+        }
+        /* Hover transitions are separated to not conflict with the theme global crossfade */
+        .glass-panel, .project-card { transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.6s, border-color 0.6s, box-shadow 0.6s; }
+        .glass-panel::before, .project-card::before {
+            content: ""; position: absolute; inset: 0; opacity: 0; transition: opacity 0.3s ease;
+            background: radial-gradient(800px circle at var(--mouse-x, 0) var(--mouse-y, 0), var(--card-glare), transparent 40%);
+            z-index: 1; pointer-events: none;
+        }
+        .glass-panel:hover::before, .project-card:hover::before { opacity: 1; }
+        .glass-panel > *, .project-card > * { position: relative; z-index: 2; }
+        
+        .text-gradient { background: var(--text-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        /* === STAGGERED CINEMATIC REVEALS === */
+        .reveal-blur { opacity: 0; filter: blur(20px); transform: translateY(80px) scale(0.95); transition: 1.6s cubic-bezier(0.16, 1, 0.3, 1); will-change: opacity, filter, transform; }
+        .reveal-blur.active { opacity: 1; filter: blur(0); transform: translateY(0) scale(1); }
+        .reveal-up { opacity: 0; transform: translateY(80px); transition: 1.4s cubic-bezier(0.16, 1, 0.3, 1); will-change: opacity, transform; }
+        .reveal-up.active { opacity: 1; transform: translateY(0); }
+        
+        .hero-anim { opacity: 0; filter: blur(20px); transform: translateY(60px) scale(0.98); transition: 1.8s cubic-bezier(0.16, 1, 0.3, 1); will-change: opacity, filter, transform; }
+        #hero.loaded .hero-anim { opacity: 1; filter: blur(0); transform: translateY(0) scale(1); }
+
+        .stagger-1 { transition-delay: 0.1s; }
+        .stagger-2 { transition-delay: 0.25s; }
+        .stagger-3 { transition-delay: 0.4s; }
+        .stagger-4 { transition-delay: 0.55s; }
+
+        /* === INSANE AURA PROFILE FX === */
+        .aura-card-container { transform-style: preserve-3d; transition: box-shadow 0.6s ease, border-color 0.6s ease; }
+        .aura-card-container:hover { box-shadow: 0 20px 60px -10px var(--accent-color), 0 0 100px var(--orb-2) !important; border-color: var(--accent-color) !important; }
+        .aura-container { transform-style: preserve-3d; }
+        .aura-img { transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); filter: grayscale(15%) contrast(1.05); }
+        .aura-card-container:hover .aura-img { filter: grayscale(0%) contrast(1.15) saturate(1.3); transform: scale(1.15) translateZ(20px); animation: imgGlitch 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+        .badge-3d { transform: translateZ(60px); transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        
+        .aura-container::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent);
+            transform: skewX(-25deg); z-index: 25; pointer-events: none;
+        }
+        .aura-card-container:hover .aura-container::before { animation: sweep 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        
+        @keyframes sweep { 0% { left: -100%; } 100% { left: 200%; } }
+        @keyframes imgGlitch {
+            0% { filter: drop-shadow(8px 0 0 var(--accent-color)) drop-shadow(-8px 0 0 var(--orb-2)); }
+            20% { filter: drop-shadow(-8px 0 0 var(--accent-color)) drop-shadow(8px 0 0 var(--orb-2)); transform: scale(1.15) translateZ(20px) translate(-3px, -3px); }
+            40% { filter: drop-shadow(4px 0 0 var(--accent-color)) drop-shadow(-4px 0 0 var(--orb-2)); transform: scale(1.15) translateZ(20px) translate(3px, 3px); }
+            100% { filter: drop-shadow(0 0 0 transparent); transform: scale(1.15) translateZ(20px) translate(0, 0); }
+        }
+
+        /* === PROJECT CARDS === */
+        .project-img-wrapper { position: relative; width: 100%; padding-top: 65%; overflow: hidden; border-radius: 24px 24px 0 0; z-index: 1; }
+        .project-img-wrapper img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 1.5s cubic-bezier(0.16, 1, 0.3, 1); }
+        .project-card:hover .project-img-wrapper img { transform: scale(1.08); }
+        
+        /* === BUTTONS & FILTERS === */
+        .btn-premium { background: var(--btn-bg); color: var(--text-main); border: 1px solid var(--card-border); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.6s, color 0.6s, border-color 0.6s; }
+        .btn-premium:hover { background: var(--btn-hover); color: var(--btn-hover-text); transform: scale(1.05); }
+        .btn-primary { background: var(--text-main); color: var(--bg-main); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.6s, color 0.6s; }
+        .btn-primary:hover { transform: scale(1.05); box-shadow: 0 10px 30px var(--shadow-color); }
+
+        .filter-btn { transition: all 0.3s ease; color: var(--text-muted); border-color: var(--card-border); }
+        .filter-btn.active { color: var(--bg-main); background: var(--text-main); border-color: var(--text-main); box-shadow: 0 0 15px var(--shadow-color); }
+
+        /* === DYNAMIC ISLAND NAV === */
+        nav { transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); width: 100%; left: 50%; transform: translateX(-50%); top: 0; border-bottom: 1px solid transparent; }
+        nav.scrolled { 
+            width: 90%; max-width: 1000px; top: 20px; 
+            background: var(--nav-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); 
+            border: 1px solid var(--card-border); border-radius: 100px;
+            box-shadow: 0 20px 50px var(--shadow-color), 0 0 0 1px var(--card-glare) inset;
+            padding-top: 0.5rem; padding-bottom: 0.5rem;
+        }
+
+        @keyframes slideUp { to { transform: translateY(0); } }
+
+        /* === PRINT STYLES === */
+        @media print {
+            body { background: white !important; color: black !important; cursor: auto !important; }
+            #loader, .cursor-dot, .ambient-orb, nav, .interactive-only, .filter-container { display: none !important; }
+            .glass-panel { background: none !important; border: none !important; box-shadow: none !important; backdrop-filter: none !important; break-inside: avoid; padding: 10px 0 !important; }
+            .reveal-blur, .reveal-up { opacity: 1 !important; transform: none !important; filter: none !important; transition: none !important; }
+            h1, h2, h3, p, span, li { color: black !important; -webkit-text-fill-color: black !important; }
+            a { color: #000 !important; text-decoration: underline !important; }
+            .project-card { border: 1px solid #ccc !important; padding: 1rem !important; margin-bottom: 1rem; break-inside: avoid; }
+            .project-img-wrapper { display: none !important; }
+            .grid { display: block !important; }
+            * { animation: none !important; transform: none !important; }
+        }
+    </style>
+</head>
+<body class="loading">
+
+    <!-- Custom Cursor -->
+    <div class="cursor-dot interactive-only" id="cursor-dot"></div>
+
+    <!-- Ambient Background -->
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+
+    <!-- INSANE AURA LOADER -->
+    <div id="loader" class="interactive-only">
+        <div class="loader-content">
+            <div class="counter-wrap">
+                <div class="loader-counter" id="counter">00%</div>
+            </div>
+            <div class="loader-text">
+                <span class="active" id="text-1">INITIALIZING AURA PROTOCOL...</span>
+                <span id="text-2">FETCHING RIFAT.DAT...</span>
+                <span id="text-3">LOADING EXECUTIVE PORTFOLIO...</span>
+                <span id="text-4" style="color: #fff; font-weight: bold;">ACCESS GRANTED.</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dynamic Island Navigation -->
+    <nav class="fixed z-50 interactive-only" id="navbar">
+        <div class="container mx-auto px-6 py-3 flex justify-between items-center">
+            
+            <a href="#" class="logo-container cursor-link">
+                <span class="animated-logo-text text-xl" data-text="Rifat.">Rifat.</span>
+                <span class="logo-sparkle">✦</span>
+            </a>
+
+            <div class="hidden md:flex space-x-8 text-sm font-medium text-theme-muted">
+                <a href="#about" class="hover:text-theme-text transition-colors duration-300 cursor-link">About</a>
+                <a href="#experience" class="hover:text-theme-text transition-colors duration-300 cursor-link">Experience</a>
+                <a href="#projects" class="hover:text-theme-text transition-colors duration-300 cursor-link">Projects</a>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <!-- SPAMMABLE CINEMATIC THEME TOGGLE -->
+                <button id="theme-toggle" class="w-10 h-10 flex items-center justify-center rounded-full btn-premium cursor-link" aria-label="Toggle Theme">
+                    <i class="fas fa-sun text-theme-text"></i>
+                </button>
+                
+                <button onclick="window.print()" class="px-5 py-2 btn-premium font-medium text-sm rounded-full cursor-link flex items-center gap-2">
+                    Download CV
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="relative z-10">
+        
+        <!-- Hero Section -->
+        <section id="hero" class="min-h-screen flex flex-col justify-center px-6 pt-20 overflow-hidden">
+            <div class="container mx-auto" id="hero-content">
+                <div class="max-w-4xl">
+                    <p class="text-theme-muted font-mono text-sm tracking-[0.2em] uppercase mb-6 hero-anim stagger-1">Rifat Ashhab</p>
+                    <h1 class="text-6xl md:text-8xl lg:text-[10rem] font-display font-bold text-theme-text tracking-tighter leading-[0.9] mb-8 hero-anim stagger-2">
+                        I build <br><span class="text-gradient">digital realities.</span>
+                    </h1>
+                    <p class="text-theme-muted text-xl md:text-2xl max-w-2xl font-light leading-relaxed mb-10 hero-anim stagger-3">
+                        Founder & Lead Developer at <a href="https://vixa.pro" target="_blank" class="text-theme-text hover:text-theme-accent transition-colors cursor-link">Vixa Corp</a>. Architecting high-performance, immersive web applications with precision and intent.
+                    </p>
+                    <div class="flex flex-wrap items-center gap-4 hero-anim stagger-4">
+                        <a href="https://vixa.pro" target="_blank" class="px-8 py-4 btn-primary rounded-full font-medium cursor-link">View Agency</a>
+                        <a href="#projects" class="px-8 py-4 btn-premium rounded-full font-medium cursor-link">See Portfolio</a>
+                        <a href="https://www.linkedin.com/in/rifatashhab/" target="_blank" class="w-[54px] h-[54px] flex items-center justify-center btn-premium rounded-full cursor-link" aria-label="LinkedIn Profile">
+                            <i class="fab fa-linkedin-in text-xl"></i>
+                        </a>
+                        <a href="https://www.instagram.com/rifat_0.1/" target="_blank" class="w-[54px] h-[54px] flex items-center justify-center btn-premium rounded-full cursor-link" aria-label="Instagram Profile">
+                            <i class="fab fa-instagram text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About / Stack -->
+        <section id="about" class="py-32 px-6 border-t border-theme-border relative">
+            <div class="absolute inset-0 bg-theme-bg opacity-40 backdrop-blur-3xl z-0 pointer-events-none transition-colors duration-500"></div>
+            <div class="container mx-auto max-w-6xl relative z-10">
+                <h2 class="text-sm font-mono text-theme-muted uppercase tracking-widest mb-16 reveal-up">01. Executive Summary</h2>
+                
+                <div class="grid lg:grid-cols-12 gap-16 items-center">
+                    
+                    <!-- AURA PROFILE IMAGE -->
+                    <div class="lg:col-span-5 reveal-blur stagger-1" style="perspective: 1000px;">
+                        <div class="glass-panel p-2 relative group cursor-explore aura-card-container" data-tilt data-tilt-max="15" data-tilt-speed="400" data-tilt-perspective="1000" data-tilt-scale="1.05" data-tilt-glare data-tilt-max-glare="0.3">
+                            <div class="aura-container relative rounded-[20px] overflow-hidden aspect-[4/5] bg-theme-bg border border-theme-border">
+                                <img src="https://raw.githubusercontent.com/ezken-dev/Arrow-pics/main/IMG_0882.PNG" alt="Rifat Ashhab Portrait" class="aura-img w-full h-full object-cover opacity-90">
+                                
+                                <!-- Cinematic Overlays -->
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent opacity-80 group-hover:opacity-30 transition-opacity duration-700 z-10 pointer-events-none"></div>
+                                <div class="absolute inset-0 border border-theme-border rounded-[20px] pointer-events-none mix-blend-overlay z-20"></div>
+                                
+                                <!-- 3D Floating Badge on Hover -->
+                                <div class="absolute bottom-6 left-6 right-6 z-30 badge-3d">
+                                    <div class="backdrop-blur-xl border border-theme-border rounded-2xl p-5 transform translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-[0.6s] ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[0_0_30px_rgba(167,139,250,0.5)]" style="background: var(--badge-bg);">
+                                        <p class="text-theme-text font-display font-bold text-xl tracking-tight flex items-center justify-between">
+                                            Rifat Ashhab <i class="fas fa-bolt text-theme-accent text-lg animate-pulse"></i>
+                                        </p>
+                                        <p class="text-theme-accent font-mono text-xs mt-1 uppercase tracking-wider">Lead Developer</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TEXT & ARSENAL -->
+                    <div class="lg:col-span-7 space-y-12">
+                        <div class="space-y-6 text-xl md:text-2xl font-light text-theme-text leading-snug reveal-up stagger-2">
+                            <p>As a full-stack developer and entrepreneur, I bridge the gap between engineering and business. I am the Founder of <strong class="font-medium">Vixa</strong>, a digital agency dedicated to high-performance web applications.</p>
+                            <p class="text-theme-muted">Beyond writing clean code, my expertise lies in technical project management, UI/UX architecture, and leading teams to deliver flawless products. I am eager to bring this technical leadership to forward-thinking teams and scale digital ecosystems.</p>
+                        </div>
+                        
+                        <div class="reveal-up stagger-3">
+                            <div class="glass-panel p-8" data-tilt data-tilt-max="2" data-tilt-speed="400">
+                                <h3 class="text-lg font-medium text-theme-text mb-6 border-b border-theme-border pb-4">Technical Arsenal</h3>
+                                <div class="space-y-6">
+                                    <div>
+                                        <p class="text-xs font-mono text-theme-muted mb-2 uppercase tracking-wider">Frontend</p>
+                                        <p class="text-theme-text">React.js, Next.js, TypeScript, Tailwind CSS, Three.js (3D)</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-mono text-theme-muted mb-2 uppercase tracking-wider">Backend & Cloud</p>
+                                        <p class="text-theme-text">Node.js, Firebase, REST APIs</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-mono text-theme-muted mb-2 uppercase tracking-wider">Design & Ops</p>
+                                        <p class="text-theme-text">UI/UX Architecture, Agile PM, Team Leadership</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Experience -->
+        <section id="experience" class="py-32 px-6">
+            <div class="container mx-auto max-w-6xl">
+                <h2 class="text-sm font-mono text-theme-muted uppercase tracking-widest mb-16 reveal-up">02. Experience</h2>
+                
+                <div class="grid lg:grid-cols-12 gap-12 relative">
+                    <!-- Left Column: Sticky Title -->
+                    <div class="lg:col-span-4 reveal-up stagger-1">
+                        <div class="sticky top-32">
+                            <h3 class="text-4xl md:text-5xl font-display font-bold text-gradient leading-tight">Career<br>Highlights.</h3>
+                            <p class="mt-4 text-theme-muted font-light">Leading teams and building brands from the ground up.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Column: Scrolling Content -->
+                    <div class="lg:col-span-8 space-y-8">
+                        
+                        <!-- Exp 1 -->
+                        <div class="glass-panel p-8 md:p-10 reveal-up stagger-1" data-tilt data-tilt-max="2" data-tilt-speed="400">
+                            <div class="md:flex justify-between items-baseline mb-6 border-b border-theme-border pb-6">
+                                <div>
+                                    <h4 class="text-2xl font-bold text-theme-text">Founder & CEO</h4>
+                                    <a href="https://vixa.pro" target="_blank" class="text-theme-accent hover:underline transition-colors cursor-link">VIXA (vixa.pro)</a>
+                                </div>
+                                <span class="text-theme-muted font-mono text-sm mt-2 md:mt-0 block">July 2025 – Present</span>
+                            </div>
+                            <ul class="space-y-4 text-theme-muted font-light leading-relaxed">
+                                <li class="flex items-start"><span class="mr-3 text-theme-accent">✦</span> Founded and scaled a digital agency providing high-end web development and branding solutions.</li>
+                                <li class="flex items-start"><span class="mr-3 text-theme-accent">✦</span> Managed the full product lifecycle for diverse clients, including the N&I Group website remaster.</li>
+                                <li class="flex items-start"><span class="mr-3 text-theme-accent">✦</span> Built and led a multidisciplinary team, implementing structured onboarding workflows.</li>
+                                <li class="flex items-start"><span class="mr-3 text-theme-accent">✦</span> Architected modern, responsive web experiences focusing on performance and user engagement.</li>
+                            </ul>
+                        </div>
+
+                        <!-- Exp 2 -->
+                        <div class="glass-panel p-8 md:p-10 reveal-up stagger-2" data-tilt data-tilt-max="2" data-tilt-speed="400">
+                            <div class="md:flex justify-between items-baseline mb-6 border-b border-theme-border pb-6">
+                                <div>
+                                    <h4 class="text-2xl font-bold text-theme-text">E-Commerce Engineer & Consultant</h4>
+                                    <span class="text-theme-text">LIORA</span>
+                                </div>
+                                <span class="text-theme-muted font-mono text-sm mt-2 md:mt-0 block">July 2025 – Present</span>
+                            </div>
+                            <ul class="space-y-4 text-theme-muted font-light leading-relaxed">
+                                <li class="flex items-start"><span class="mr-3 text-theme-accent">✦</span> Architected and developed the complete e-commerce web platform for the fashion brand.</li>
+                                <li class="flex items-start"><span class="mr-3 text-theme-accent">✦</span> Sourced global suppliers and managed supply chain logistics to streamline operations.</li>
+                                <li class="flex items-start"><span class="mr-3 text-theme-accent">✦</span> Optimized digital presence and backend integrations to accelerate the brand's market launch.</li>
+                            </ul>
+                        </div>
+
+                        <!-- Exp 3 -->
+                        <div class="glass-panel p-8 md:p-10 reveal-up stagger-3" data-tilt data-tilt-max="2" data-tilt-speed="400">
+                            <div class="md:flex justify-between items-baseline mb-6 border-b border-theme-border pb-6">
+                                <div>
+                                    <h4 class="text-2xl font-bold text-theme-text">Lead Developer</h4>
+                                    <span class="text-theme-text">FONITY STUDIOS</span>
+                                </div>
+                                <span class="text-theme-muted font-mono text-sm mt-2 md:mt-0 block">June 2025 – Present</span>
+                            </div>
+                            <ul class="space-y-4 text-theme-muted font-light leading-relaxed">
+                                <li class="flex items-start"><span class="mr-3 text-theme-accent">✦</span> Engineered interactive multiplayer experiences using Luau on the Roblox platform.</li>
+                                <li class="flex items-start"><span class="mr-3 text-theme-accent">✦</span> Managed community engagement and digital asset distribution for a growing player base.</li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Portfolio -->
+        <section id="projects" class="py-32 px-6 border-t border-theme-border relative">
+            <div class="absolute inset-0 bg-theme-bg opacity-40 backdrop-blur-3xl z-0 pointer-events-none transition-colors duration-500"></div>
+            <div class="container mx-auto max-w-7xl relative z-10">
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 reveal-up">
+                    <div>
+                        <h2 class="text-sm font-mono text-theme-muted uppercase tracking-widest mb-4">03. Digital Portfolio</h2>
+                        <h3 class="text-4xl md:text-5xl font-display font-bold text-theme-text tracking-tight">Selected Works.</h3>
+                    </div>
+                    
+                    <!-- Filters -->
+                    <div class="flex flex-wrap gap-3 mt-8 md:mt-0 filter-container">
+                        <button class="filter-btn active px-6 py-2.5 border rounded-full font-medium cursor-link text-sm" data-filter="all">All</button>
+                        <button class="filter-btn px-6 py-2.5 border rounded-full font-medium cursor-link text-sm" data-filter="ai">AI Bots</button>
+                        <button class="filter-btn px-6 py-2.5 border rounded-full font-medium cursor-link text-sm" data-filter="website">Websites</button>
+                        <button class="filter-btn px-6 py-2.5 border rounded-full font-medium cursor-link text-sm" data-filter="video">Media</button>
+                    </div>
+                </div>
+
+                <!-- Grid container -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="portfolio-grid">
+                    <!-- Items injected via JS -->
+                </div>
+            </div>
+        </section>
+        
+        <footer class="py-12 text-center text-theme-muted border-t border-theme-border mt-10">
+            <div class="container mx-auto px-6 flex flex-col items-center reveal-up">
+                
+                <a href="#" class="logo-container cursor-link mb-6">
+                    <span class="animated-logo-text text-2xl" data-text="Rifat.">Rifat.</span>
+                    <span class="logo-sparkle">✦</span>
+                </a>
+
+                <p class="font-light text-sm max-w-md">Designed & Engineered by Rifat Ashhab.<br>Crafted with precision for the modern web.</p>
+                <div class="flex gap-6 mt-6">
+                    <a href="https://vixa.pro" target="_blank" class="text-theme-muted hover:text-theme-text transition-colors cursor-link hover:scale-125 transform"><i class="fas fa-globe text-xl"></i></a>
+                    <a href="https://www.linkedin.com/in/rifatashhab/" target="_blank" class="text-theme-muted hover:text-theme-text transition-colors cursor-link hover:scale-125 transform"><i class="fab fa-linkedin text-xl"></i></a>
+                    <a href="https://github.com/ezken-dev" target="_blank" class="text-theme-muted hover:text-theme-text transition-colors cursor-link hover:scale-125 transform"><i class="fab fa-github text-xl"></i></a>
+                    <a href="https://www.instagram.com/rifat_0.1/" target="_blank" class="text-theme-muted hover:text-theme-text transition-colors cursor-link hover:scale-125 transform"><i class="fab fa-instagram text-xl"></i></a>
+                </div>
+            </div>
+        </footer>
+
+    </main>
+
+    <!-- Project Data & Logic -->
+    <script>
+        // --- 0. CINEMATIC BLUR MORPH (THE ULTIMATE THEME TOGGLE) ---
+        const themeBtn = document.getElementById('theme-toggle');
+        let isLightMode = false;
+
+        themeBtn.addEventListener('click', (e) => {
+            const rect = themeBtn.getBoundingClientRect();
+            const x = rect.left + rect.width / 2;
+            const y = rect.top + rect.height / 2;
+
+            isLightMode = !isLightMode;
+            
+            // 1. The Glare Burst (originates exactly from the button)
+            const glare = document.createElement('div');
+            glare.className = 'theme-glare';
+            // Flash pure white when going to light, pure black when going to dark
+            const flareColor = isLightMode ? '255,255,255' : '0,0,0';
+            glare.style.background = `radial-gradient(circle, rgba(${flareColor},1) 0%, rgba(${flareColor},0) 70%)`;
+            glare.style.width = '300px';
+            glare.style.height = '300px';
+            glare.style.left = `${x}px`;
+            glare.style.top = `${y}px`;
+            
+            // 2. The Cinematic Frosted Glass
+            const blurOverlay = document.createElement('div');
+            blurOverlay.className = 'theme-blur-morph';
+            blurOverlay.style.background = `rgba(${flareColor}, 0.15)`;
+
+            document.body.appendChild(glare);
+            document.body.appendChild(blurOverlay);
+
+            // Button Icon Micro-Interaction
+            const icon = themeBtn.querySelector('i');
+            if(icon) {
+                icon.style.transition = 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s';
+                icon.style.transform = `rotate(${isLightMode ? -180 : 180}deg) scale(0.2)`;
+                icon.style.opacity = '0';
+            }
+
+            // Haptic Feedback for Mobile
+            if (navigator.vibrate) navigator.vibrate(50);
+
+            // Force reflow
+            void glare.offsetWidth; 
+            
+            // Trigger Expansion & Blur
+            glare.style.transform = 'translate(-50%, -50%) scale(20)';
+            glare.style.opacity = '0';
+            blurOverlay.classList.add('active');
+
+            // Wait for the blur to peak, then swap the CSS variables
+            setTimeout(() => {
+                document.body.classList.toggle('light-mode', isLightMode);
+                
+                // Swap icon with entrance animation class
+                themeBtn.innerHTML = isLightMode ? '<i class="fas fa-moon text-theme-text theme-icon-enter"></i>' : '<i class="fas fa-sun text-theme-text theme-icon-enter"></i>';
+                
+                // Keep active filter shadow matching the theme
+                const activeFilter = document.querySelector('.filter-btn.active');
+                if(activeFilter) {
+                    activeFilter.style.boxShadow = `0 0 15px var(--shadow-color)`;
+                }
+                
+                // Dissipate the Frosted Glass revealing the smoothly transitioned colors underneath
+                blurOverlay.classList.remove('active');
+                blurOverlay.style.opacity = '0';
+                
+                // Cleanup DOM
+                setTimeout(() => {
+                    glare.remove();
+                    blurOverlay.remove();
+                }, 600);
+
+            }, 200); // 200ms is the perfectly crisp snap timing
+        });
+
+
+        // --- 1. AURA LOADER ---
+        const loader = document.getElementById('loader');
+        const counter = document.getElementById('counter');
+        const fill = document.getElementById('progress-fill');
+        const texts = [
+            document.getElementById('text-1'),
+            document.getElementById('text-2'),
+            document.getElementById('text-3'),
+            document.getElementById('text-4')
+        ];
+        
+        let progress = 0;
+        let textIndex = 0;
+
+        function updateLoader() {
+            progress += Math.random() * 15;
+            if (progress > 100) progress = 100;
+            
+            counter.innerText = Math.floor(progress).toString().padStart(2, '0') + '%';
+            fill.style.width = progress + '%';
+
+            if (progress > 30 && textIndex === 0) switchText(1);
+            if (progress > 65 && textIndex === 1) switchText(2);
+            if (progress >= 100 && textIndex === 2) {
+                switchText(3);
+                setTimeout(() => finishLoading(), 600);
+            }
+
+            if (progress < 100) {
+                setTimeout(updateLoader, 50 + Math.random() * 150);
+            }
+        }
+
+        function switchText(newIndex) {
+            texts[textIndex].classList.remove('active');
+            textIndex = newIndex;
+            texts[textIndex].classList.add('active');
+        }
+
+        function finishLoading() {
+            loader.classList.add('exit-up');
+            document.body.classList.remove('loading');
+            
+            setTimeout(() => {
+                document.getElementById('hero').classList.add('loaded');
+            }, 200);
+
+            setTimeout(() => { loader.style.display = 'none'; }, 1600);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => { setTimeout(updateLoader, 300); });
+
+        // --- 1.5 MONSTER SMOOTH SCROLLING (LENIS) ---
+        const lenis = new Lenis({
+            duration: 1.8,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), 
+            direction: 'vertical',
+            gestureDirection: 'vertical',
+            smooth: true,
+            mouseMultiplier: 1.2,
+            smoothTouch: false,
+            touchMultiplier: 2,
+        });
+
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+
+        // Smooth Anchor Link Navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') {
+                    lenis.scrollTo(0, { duration: 1.5 });
+                } else {
+                    const target = document.querySelector(targetId);
+                    if (target) {
+                        lenis.scrollTo(target, {
+                            offset: -100,
+                            duration: 1.5,
+                            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
+                        });
+                    }
+                }
+            });
+        });
+
+        // --- 2. PREMIUM CURSOR ---
+        const cursorDot = document.getElementById('cursor-dot');
+        let mouseX = 0, mouseY = 0;
+        let cursorX = 0, cursorY = 0;
+        
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function loopCursor() {
+            cursorX += (mouseX - cursorX) * 0.2;
+            cursorY += (mouseY - cursorY) * 0.2;
+            cursorDot.style.left = cursorX + 'px';
+            cursorDot.style.top = cursorY + 'px';
+            requestAnimationFrame(loopCursor);
+        }
+        loopCursor();
+
+        const setupHoverElements = () => {
+            document.querySelectorAll('.cursor-link, a, button').forEach(el => {
+                el.addEventListener('mouseenter', () => cursorDot.classList.add('hover-link'));
+                el.addEventListener('mouseleave', () => cursorDot.classList.remove('hover-link'));
+            });
+
+            document.querySelectorAll('.cursor-explore').forEach(el => {
+                el.addEventListener('mouseenter', () => cursorDot.classList.add('hover-explore'));
+                el.addEventListener('mouseleave', () => cursorDot.classList.remove('hover-explore'));
+            });
+            
+            document.querySelectorAll('.glass-panel, .project-card').forEach(card => {
+                card.addEventListener('mousemove', e => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    card.style.setProperty('--mouse-x', `${x}px`);
+                    card.style.setProperty('--mouse-y', `${y}px`);
+                });
+            });
+        };
+
+        // --- 3. SCROLL EFFECTS (Parallax & Dynamic Island Navbar) ---
+        const navbar = document.getElementById('navbar');
+        const heroContent = document.getElementById('hero-content');
+        
+        lenis.on('scroll', (e) => {
+            const scrollY = window.scrollY;
+            
+            if (scrollY > 80) navbar.classList.add('scrolled');
+            else navbar.classList.remove('scrolled');
+            
+            if (heroContent && scrollY < window.innerHeight) {
+                const yPos = scrollY * 0.5;
+                const opacity = Math.max(0, 1 - (scrollY * 0.002));
+                heroContent.style.transform = `translateY(${yPos}px)`;
+                heroContent.style.opacity = opacity;
+            }
+        });
+
+        // --- 4. SCROLL REVEALS (Intersection Observer) ---
+        const observerOptions = { root: null, rootMargin: '0px 0px -15% 0px', threshold: 0 };
+        const revealObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal-blur, .reveal-up').forEach((el) => {
+            revealObserver.observe(el);
+        });
+
+        // --- 5. PROJECTS DATA & RENDERING ---
+        const projects = [
+            { category: 'ai', title: 'Vixa AI Suite', desc: 'SaaS platform featuring a text humanizer, study chatbot, and essay composer.', tags: ['AI', 'SaaS'], link: 'https://vixa-ai.netlify.app', img: 'https://github.com/ezken-dev/ez-musics/blob/main/image_2025-07-20_132348527.png?raw=true' },
+            { category: 'website', title: 'EzKen OS - Apex Edition', desc: 'A productive web OS built entirely from scratch with zero frameworks.', tags: ['Vanilla JS', 'Web App'], link: 'https://ezken-dev.github.io', img: 'https://raw.githubusercontent.com/ezken-dev/Arrow-pics/main/image_2026-04-28_003143755.png' },
+            { category: 'website', title: 'N&I Group Enterprise', desc: 'Full-stack infrastructure revamp for a major woven factory and trading corp.', tags: ['Node.js', 'Corporate'], link: 'https://niremastered.netlify.app', img: 'https://cdn.jsdelivr.net/gh/ezken-dev/ez-musics@main/ni%20portfolio%20original.png' },
+            { category: 'website', title: 'The Hearth', desc: 'Immersive multiplayer hangout experience engineered with Luau. Features complex narrative triggers and deep interactive mechanics.', tags: ['Game Dev', 'Luau'], link: 'https://www.roblox.com/games/127072693793890/The-Hearth-Highly-Rated', img: 'https://cdn.jsdelivr.net/gh/ezken-dev/ez-musics@main/The%20hearth.png' },
+            { category: 'ai', title: 'Aura AI Speech Coach', desc: 'Mobile-first application utilizing AI to analyze and improve public speaking.', tags: ['AI', 'Mobile First'], link: 'https://aura-bd.netlify.app', img: 'https://raw.githubusercontent.com/ezken-dev/ez-musics/main/image_2025-10-03_192258728.png' },
+            { category: 'website', title: 'Vixa Expense Tracker', desc: 'Intelligent financial tracking dashboard with automated insights.', tags: ['FinTech', 'Dashboard'], link: 'https://vixa-expense.netlify.app', img: 'https://raw.githubusercontent.com/ezken-dev/ez-musics/main/image_2025-10-03_192422572.png' },
+            { category: 'website', title: 'Fonity Studio Portal', desc: 'Sleek, high-performance agency portfolio built for speed and fluid responsiveness.', tags: ['Web Dev', 'Agency'], link: 'https://fonity-dev.netlify.app', img: 'https://cdn.jsdelivr.net/gh/ezken-dev/ez-musics@main/image_2025-06-29_182951756.png' },
+            { category: 'website', title: 'Royal Cafe Web App', desc: 'Elegant and highly interactive functional web experience designed for the premium hospitality sector.', tags: ['UI/UX', 'Frontend'], link: 'https://royalcafe-demo.netlify.app', img: 'https://cdn.jsdelivr.net/gh/ezken-dev/ez-musics@main/image_2025-06-29_182648099.png' },
+            { category: 'video', title: 'Python Security Auth', desc: 'Secure login/registration system developed entirely with Python.', tags: ['Python', 'Security'], link: 'https://youtu.be/46LQ54XqBgs', img: 'https://i.ytimg.com/vi/46LQ54XqBgs/hqdefault.jpg' },
+            { category: 'video', title: 'Python GUI Notepad', desc: 'Fully functional desktop application engineered using Python and Tkinter for a lightweight footprint.', tags: ['Python', 'Software'], link: 'https://youtu.be/CdV_qLnVdvk', img: 'https://i.ytimg.com/vi/CdV_qLnVdvk/hqdefault.jpg' },
+            { category: 'ai', title: 'KnowProducts Lens', desc: 'Computer vision scanner connecting physical products to supplier data.', tags: ['Vision', 'E-Com'], link: 'https://knowproducts.netlify.app', img: 'https://raw.githubusercontent.com/ezken-dev/ez-musics/main/image_2025-10-03_192653912.png' },
+            { category: 'website', title: 'Fonity GameShop', desc: 'High-performance e-commerce storefront for the gaming industry.', tags: ['E-Commerce', 'UI/UX'], link: 'https://fonity-gameshop.netlify.app', img: 'https://raw.githubusercontent.com/ezken-dev/ez-musics/main/image_2025-10-03_192153239.png' },
+            { category: 'website', title: 'YUMZEE Interface', desc: 'Modern, responsive food-service demonstration interface highlighting clean UX principles.', tags: ['Design', 'Demo'], link: 'https://yumzee-demo.netlify.app', img: 'https://cdn.jsdelivr.net/gh/ezken-dev/ez-musics@main/image_2025-06-29_182610688.png' },
+            { category: 'video', title: 'Blackhole Visualizer', desc: 'Epic gravitational lensing and particle physics simulation rendered in Blender with custom SFX.', tags: ['VFX', '3D Render'], link: 'https://youtu.be/Xy3KBysZO9M', img: 'https://i.ytimg.com/vi/Xy3KBysZO9M/hqdefault.jpg' },
+            { category: 'video', title: 'Earth Cinematic', desc: 'Photorealistic planetary render utilizing the Cycles engine for hyper-accurate atmospheric scattering.', tags: ['CGI', 'Blender'], link: 'https://youtu.be/SjQ-EHnew0E', img: 'https://i.ytimg.com/vi/SjQ-EHnew0E/hqdefault.jpg' },
+            { category: 'video', title: 'Animated Music Teaser', desc: 'Captivating narrative-driven motion graphics teaser for an upcoming digital music release.', tags: ['Motion', 'Editing'], link: 'https://youtu.be/0tDPD6n9iyk', img: 'https://i.ytimg.com/vi/0tDPD6n9iyk/hqdefault.jpg' },
+            { category: 'graphics', title: 'Roblox Avatar CGI', desc: 'Dramatic 3D character posing and cinematic lighting setup produced for a high-profile client.', tags: ['3D Art', 'Commission'], link: '#', img: 'https://cdn.jsdelivr.net/gh/ezken-dev/ez-musics@main/Final%20Rendered%20Ken%20red%20and%20blue.png' },
+            { category: 'graphics', title: 'Ocean Sunset Render', desc: 'Serene volumetric environmental render focused on fluid dynamics and accurate water caustics.', tags: ['Environment', 'Cycles'], link: '#', img: 'https://cdn.jsdelivr.net/gh/ezken-dev/ez-musics@main/Ocean%20sunset%20blender%20cycles.png' },
+            { category: 'graphics', title: 'Dragon Commission', desc: 'High-fidelity fantasy composition featuring custom character rigs and advanced textural mapping.', tags: ['Fantasy', 'Blender'], link: '#', img: 'https://cdn.jsdelivr.net/gh/ezken-dev/ez-musics@main/Dragon%20final.png' },
+            { category: 'graphics', title: '3D Donut Render', desc: 'Photorealistic modeling, texturing, and particle systems created in Blender.', tags: ['Blender', 'CGI'], link: '#', img: 'https://cdn.jsdelivr.net/gh/ezken-dev/ez-musics@main/Blender%20donut%20third%20render.png' }
+        ];
+
+        const grid = document.getElementById('portfolio-grid');
+
+        function renderProjects(filter = 'all') {
+            grid.innerHTML = '';
+            
+            let actualFilter = filter;
+            if(filter === 'video') actualFilter = ['video', 'graphics'];
+
+            const filtered = filter === 'all' 
+                ? projects 
+                : projects.filter(p => Array.isArray(actualFilter) ? actualFilter.includes(p.category) : p.category === actualFilter);
+            
+            filtered.forEach((proj, idx) => {
+                const tagsHtml = proj.tags.map(t => `<span class="bg-[var(--btn-bg)] text-theme-muted px-3 py-1 rounded-full text-xs border border-theme-border">${t}</span>`).join('');
+                
+                const card = document.createElement('div');
+                card.className = `project-card cursor-explore reveal-up active`; 
+                card.setAttribute('data-tilt', '');
+                card.setAttribute('data-tilt-max', '3');
+                card.setAttribute('data-tilt-speed', '400');
+                
+                card.style.animation = `cardAppear 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards ${(idx * 0.1)}s`;
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+
+                card.innerHTML = `
+                    <div class="project-img-wrapper">
+                        <img src="${proj.img}" alt="${proj.title}" onerror="this.src='https://placehold.co/800x600/1c1c1e/8b5cf6?text=Vixa'">
+                    </div>
+                    <div class="p-8">
+                        <h3 class="text-xl font-bold text-theme-text mb-2">${proj.title}</h3>
+                        <p class="text-theme-muted text-sm mb-6 font-light leading-relaxed">${proj.desc}</p>
+                        <div class="flex flex-wrap gap-2">${tagsHtml}</div>
+                    </div>
+                `;
+                
+                if(proj.link !== '#') {
+                    card.onclick = () => window.open(proj.link, '_blank');
+                }
+                
+                grid.appendChild(card);
+            });
+            
+            VanillaTilt.init(document.querySelectorAll(".project-card"));
+            setupHoverElements();
+        }
+
+        renderProjects();
+
+        // Filter Controls
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-btn').forEach(b => {
+                    b.classList.remove('active');
+                    b.style.boxShadow = 'none';
+                });
+                e.target.classList.add('active');
+                e.target.style.boxShadow = `0 0 15px var(--shadow-color)`;
+                renderProjects(e.target.dataset.filter);
+            });
+        });
+
+        const style = document.createElement('style');
+        style.innerHTML = `@keyframes cardAppear { to { opacity: 1; transform: translateY(0); } }`;
+        document.head.appendChild(style);
+
+        setupHoverElements();
+
+    </script>
+</body>
+</html>
